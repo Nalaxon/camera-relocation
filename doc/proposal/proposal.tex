@@ -91,6 +91,8 @@
 
 \repcity{Graz}            % City where the report was created
 
+\reportnr{1}
+
 \repdate{\today}          % Date of creation
 
 \keywords{Report, Technical report, template, ICG} % keywords that appear below the abstract
@@ -168,7 +170,7 @@
 
 
 
-Replace this text with your abstract.
+%Replace this text with your abstract.
 
 
 
@@ -188,11 +190,11 @@ Replace this text with your abstract.
 \subsection{Research of SOTA} % (fold)
 \label{sub:research_of_sota}
 
-In Shotton et. al \cite{shotton} the state of the art (SOTA) methods were described as \bold{sparse baseline} and \bold{Tiny-image baseline}. 
+In Shotton et. al \cite{shotton} the state of the art (SOTA) methods were described as \textbf{sparse baseline} and \textbf{Tiny-image baseline}. 
 
-For \bold{sparse baseline.} technique, local feature detection and descriptors are used. These descriptors are used to build a 3D point cloud with RGB-D training images and matched at test time with the current image. For more robustness RANSAC \cite{Henry10rgbdmapping} for the matching is used. \cite{DBLP:conf/bmvc/GeeM12} 
+For \textbf{sparse baseline.} technique, local feature detection and descriptors are used. These descriptors are used to build a 3D point cloud with RGB-D training images and matched at test time with the current image. For more robustness RANSAC \cite{Henry10rgbdmapping} for the matching is used. \cite{DBLP:conf/bmvc/GeeM12} 
 
-\bold{tiny-image baseline.} This baseline represents a whole-image matching approaches. Therfore the training images are down-sampled and blurred with a Gaussian kernel. At test time, brute-force matching for matching is used.
+\textbf{Tiny-image baseline.} This baseline represents a whole-image matching approaches. Therefore the training images are down-sampled and blurred with a Gaussian kernel. At test time, brute-force matching for matching is used.
 
 Mainly dense RGB-D Simultaneous Localization and Mapping (SLAM) \cite{Comport10} techniques \cite{DamenGMC12} are used to create a model of the world. SLAM is used to improved matching of RGBD image pairs by minimizing intensity and depth information.
 
