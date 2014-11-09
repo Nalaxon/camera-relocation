@@ -70,6 +70,7 @@
 
 \usepackage{techrep_icg}
 
+
 % package 'graphicx' is automatically included depending on the
 
 %   used compiler (latex, pdflatex), don't include it!!!
@@ -82,7 +83,7 @@
 
 
 
-\reportnr{xxx}               % Number of the technical report
+%\reportnr{xxx}               % Number of the technical report
 
 \title{Proposal} % Title of technical report
 
@@ -248,6 +249,18 @@ With this labeling the forest can be grown using the standard greedy forest trai
 \begin{eqnarray}
   V(S) = \frac{1}{|S|} \sum_{(\mathbf{p},\mathbf{m}) \in S}{||\mathbf{m} - \mathbf{\bar m}||_2^2}
 \end{eqnarray}
+
+With this regression forest it is now possible to associate scene coordinates with any 2D image pixel. This information can be used to estimate the camera location and orientation by minimizing the energy over the camera pose matrix H.
+
+\begin{eqnarray}
+  H^{*} = arg\min_H E(H)
+\end{eqnarray} 
+
+\begin{eqnarray}
+  E(H) = \sum_{i \in \mathit{I}}{\rho (\min_{m \in \mathit{M}_i}||\mathbf{m} -Hx_i||_2)} = \sum_{i \in \mathit{I}}{e_i(H)}
+\end{eqnarray}
+
+This energy is optimized using an adapted version of preemptive RANSAC \cite{ransac}.
 
 % subsubsection camera_relocalization (end)
 
