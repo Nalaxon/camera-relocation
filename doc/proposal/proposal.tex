@@ -206,7 +206,44 @@ The implementation of the regression forest can be evaluated using standard regr
 \subsubsection{Camera Relocalization} % (fold)
 \label{ssub:camera_relocalization}
 
-The regression forest will now be used for the task of camera relocalization. To achieve this the method by \cite{shotton} will be implemented.
+The regression forest will now be used for the task of camera relocalization. To achieve this the method by Shotton et al. \cite{shotton} will be implemented.
+
+This method uses a weak learner approach. The regression tree is evaluated by starting at the root node and descend to a leaf by repeatedly evaluating:
+
+\begin{eqnarray}\label{eqn:weaklearner}
+  h(\mathbf{p};\mathbf{\theta}_n) = [ f_{\phi_n}(\mathbf{p}) \geq \tau_n ]
+\end{eqnarray}
+
+
+Where $\mathbf{p}$ denotes the 2D pixel location in an image, $\tau$ a threshold, and n the index of a node in the tree. $f_{\phi}$ is a feature response function. Each leaf node stores a distribution $P_{l}(\mathbf{m})$ with $\mathbf{m} \in \mathbb{R}^3$ being the scene's 3D coordinates in world space.
+
+The following feature response functions were defined:
+
+\begin{eqnarray}
+  f_{\phi}^{depth}(\mathbf{p}) = D(\mathbf{p} + \frac{\mathbf{\delta_1}}{D(\mathbf{p})}) - D(\mathbf{p} + \frac{\mathbf{\delta_2}}{D(\mathbf(p))})
+\end{eqnarray}
+\begin{eqnarray}
+  f_{\phi}^{da-rgb}(\mathbf{p}) = I(\mathbf{p} + \frac{\mathbf{\delta_1}}{D(\mathbf{p})},c_1) - I(\mathbf{p} + \frac{\mathbf{\delta_2}}{D(\mathbf(p))},c_2)
+\end{eqnarray}
+
+$\mathbf{\delta}$ indicates a 2D offset, $D(\mathbf{p})$ a depth pixel lookup, and $I(\mathbf{p},c)$ indicates an RGB pixel lookup in channel $c$.
+
+The scene coordinate labels are simply defined as the scene world positions $\mathbf{m}$:
+
+\begin{eqnarray*}
+  \mathbf{m} = Hx
+\end{eqnarray*}
+
+With this labeling the forest can be grown using the standard greedy forest training algorithm. At each node a weak lerner parameter $\theta$ is sampled at random and evaluated by equation (\ref{eqn:weaklearner}). This leaves two subsets which can be evaluated as follows:
+
+
+\begin{eqnarray}
+  Q(S_n,\theta) = V(S_n) - \sum_{d\in\{L,R\}}{\frac{|S_n^d(\theta)|}{|S_n|}V(S_n^d(\theta))}
+\end{eqnarray}
+
+\begin{eqnarray}
+  V(S) = \frac{1}{|S|} \sum_{(\mathbf{p},\mathbf{m}) \in S}{||\mathbf{m} - \mathbf{\bar m}||_2^2}
+\end{eqnarray}
 
 % subsubsection camera_relocalization (end)
 
