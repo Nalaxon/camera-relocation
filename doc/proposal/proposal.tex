@@ -86,7 +86,7 @@
 
 \title{Proposal} % Title of technical report
 
-\subtitle{Camera relocation using regression random forest} % Subtitle of technical report (use small letters only)
+\subtitle{Camera relocalization using regression random forest} % Subtitle of technical report (use small letters only)
 
 \repcity{Graz}            % City where the report was created
 
@@ -114,7 +114,7 @@
 
 %
 
-\author[ICG]{Thomas Pitsch}
+\author[ICG]{Thomas Pietsch}
 \author[ICG]{Bernhard Rapp}
 
 
@@ -149,11 +149,11 @@
 
 % Name of contact
 
-\contact{Thomas Pitsch}
+\contact{Thomas Pietsch}
 
 % Email address of contact - do not use any LaTeX formatting here
 
-\contactemail{youremail@tugraz.at}
+\contactemail{thomas.pietsch@student.tugraz.at}
 
 
 
@@ -182,11 +182,55 @@ Replace this text with your abstract.
 
 
 
-\section{Your document...}
+\section{Project Proposal}
 
-... starts here.
+\subsection{Research of SOTA} % (fold)
+\label{sub:research_of_sota}
+
+% subsection research_of_sota (end)
 
 
+\subsection{What method will get implemented?} % (fold)
+\label{sub:what_method_will_get_implemented_}
+
+\subsubsection*{Regression Forest} % (fold)
+\label{ssub:regression_forest}
+
+First a regression forest based on the Piotr Dollar toolbox \cite{piotr} will be implemented. The Matlab code for the Piotr Dollar toolbox is readily available and we will adapt the random classification forest to create a regression forest.
+
+The implementation of the regression forest can be evaluated using standard regression benchmarks from https://archive.ics.uci.edu/ml/datasets.html?format=&task=reg&att=&area=&numAtt=&numIns=&type=&sort=nameUp&view=table
+
+% subsubsection regression_forest (end)
+
+\subsubsection{Camera Relocalization} % (fold)
+\label{ssub:camera_relocalization}
+
+The regression forest will now be used for the task of camera relocalization. To achieve this the method by \cite{shotton} will be implemented.
+
+% subsubsection camera_relocalization (end)
+
+% subsection what_method_will_get_implemented_ (end)
+
+\subsection{How can the method be evaluated?} % (fold)
+\label{sub:how_can_the_method_be_evaluated_}
+
+Shotton et al. \cite{shotton} provide several datasets which can be used to evaluate our implementation. Further we could create our own datasets using Kinect Fusion \cite{izadi_fusion} \cite{newcome_fusion}.
+
+% subsection how_can_the_method_be_evaluated_ (end)
+
+
+% ============================================================
+% Bibliography
+% ============================================================
+\clearpage
+\renewcommand{\leftmark}{}
+
+
+
+\bibliographystyle{plain}
+%\addcontentsline{toc}{chapter}{Bibliography}
+%\bibliographystyle{plain}
+\bibliography{./bibtex}
 
 \end{document}
 
