@@ -196,7 +196,11 @@ Replace this text with your abstract.
 \subsubsection*{Regression Forest} % (fold)
 \label{ssub:regression_forest}
 
-First a regression forest based on the Piotr Dollar toolbox \cite{piotr} will be implemented. The Matlab code for the Piotr Dollar toolbox is readily available and we will adapt the random classification forest to create a regression forest.
+First a regression forest based on the Piotr Dollar toolbox \cite{piotr} will be implemented. The Matlab code for the Piotr Dollar toolbox is readily available and we will adapt the random classification forest to create a regression forest. Therefore the split function and output has to be modified.
+
+Secondly the implementation itself should be evaluated, to make a statement to the general performance of the implementation.
+
+After that the implementation should be used for camera relocalization. Again the dataset should be evaluated. Here not only the evaluation described below is used, but also own dataset. The aim of this work is to show negative examples and find scenarios where the introduced method \cite{shotton} doesn't work as presented.
 
 The implementation of the regression forest can be evaluated using standard regression benchmarks from
 \href{https://archive.ics.uci.edu/ml/datasets.html?format=&task=reg&att=&area=&numAtt=&numIns=&type=&sort=nameUp&view=table}{https://archive.ics.uci.edu}
