@@ -10,6 +10,7 @@
 %define forst configuration
 N=1000; d=2; H=5;
 [xs0, hs0, xs1, hs1] = demoGenData(N, N,H,d,1,1);
+xs0=single(xs0); xs1=single(xs1);
 
 %train forest
 pTrain={'maxDepth', 50, 'F1', 2 'M', 150, 'minChild', 5, 'H', H};
