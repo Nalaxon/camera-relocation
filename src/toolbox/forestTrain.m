@@ -95,10 +95,13 @@ end
 function tree = treeTrain( data, hs, dWts, prmTree )
 % Train single random tree.
 [H,F1,minCount,minChild,maxDepth,fWts,split,discretize]=deal(prmTree{:});
-N=size(data,1); K=2*N-1; discr=~isempty(discretize);
+N=size(data,1); %data size
+K=2*N-1; %maximal number of nodes. E.g.: 2 nodes = 3
+discr=~isempty(discretize);
 thrs=zeros(K,1,'single'); distr=zeros(K,H,'single');
 fids=zeros(K,1,'uint32'); child=fids; count=fids; depth=fids;
-hsn=cell(K,1); dids=cell(K,1); dids{1}=uint32(1:N); k=1; K=2;
+hsn=cell(K,1); dids=cell(K,1); dids{1}=uint32(1:N);
+k=1; K=2; %k.. current node; K.. current number of nodes
 while( k < K )
   % get node data and store distribution
   dids1=dids{k}; dids{k}=[]; hs1=hs(dids1); n1=length(hs1); count(k)=n1;
