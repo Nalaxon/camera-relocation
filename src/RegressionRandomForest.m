@@ -28,8 +28,7 @@ hsPr1 = forestApply(xs1, forest);
 e0=mean(hsPr0~=hs0); e1=mean(hsPr1~=hs1);
 fprintf('errors trn=%f tst=%f\n', e0, e1); figure(1);
 figure(1);
-subplot(2,2,1); visualizeData(xs0,2,hs0);
-subplot(2,2,2); visualizeData(xs0,2,hsPr0);
-subplot(2,2,3); visualizeData(xs1,2,hs1);
-subplot(2,2,4); visualizeData(xs1,2,hsPr1);
-
+subplot(3,2,1); visualizeData(xs0,2,hs0);
+subplot(3,2,2); visualizeData(xs0,2,hsPr0);
+subplot(3,2,3); visualizeData(xs1,2,hs1);
+subplot(3,2,4); visualizeData(xs1,2,hsPr1);

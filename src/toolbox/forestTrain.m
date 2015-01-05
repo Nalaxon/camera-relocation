@@ -94,12 +94,13 @@ end
 
 function tree = treeTrain( data, hs, dWts, prmTree )
 % Train single random tree.
-[H,F1,minCount,minChild,maxDepth,fWts,split,discretize]=deal(prmTree{:});
+[H,F1,minCount,minChild,maxDepth,fWts,split,discretize,]=deal(prmTree{:});
 N=size(data,1); %data size
 K=2*N-1; %maximal number of nodes. E.g.: 2 nodes = 3
 discr=~isempty(discretize);
 thrs=zeros(K,1,'single'); distr=zeros(K,H,'single');
 fids=zeros(K,1,'uint32'); child=fids; count=fids; depth=fids;
+means=zeros(K,1, 'double'); variances=zeros(K,1, 'double');
 hsn=cell(K,1); dids=cell(K,1); dids{1}=uint32(1:N);
 k=1; K=2; %k.. current node; K.. current number of nodes
 while( k < K )
@@ -119,13 +120,16 @@ while( k < K )
   if( gain>1e-10 && count0>=minChild && (n1-count0)>=minChild )
     child(k)=K; fids(k)=fid-1; thrs(k)=thr;
     dids{K}=dids1(left); dids{K+1}=dids1(~left);
+    means(K)=mean(data1(left)); means(K+1)=mean(data1(~left));
+    variances(K)=var(datforea1(left)); variances(K+1)=var(data1(~left));
     depth(K:K+1)=depth(k)+1; K=K+2;
   end; k=k+1;
 end
 % create output model struct
 K=1:K-1; if(discr), hsn={hsn(K)}; else hsn=[hsn{K}]'; end
 tree=struct('fids',fids(K),'thrs',thrs(K),'child',child(K),...
-  'distr',distr(K,:),'hs',hsn,'count',count(K),'depth',depth(K));
+  'distr',distr(K,:),'hs',hsn,'count',count(K),'depth',depth(K),...
+  'mean', means(K), 'var', variances(K));
 end
 
 function ids = wswor( prob, N, trials )
