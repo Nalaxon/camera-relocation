@@ -38,8 +38,11 @@ void forestFindThr( int H, int N, int F, const float *data,
   if( split==1 ) { for( i=0; i<H; i++ ) g+=entropy(W[i]); vBst=vInit=g/w; }
   // loop over features, then thresholds (data is sorted by feature value)
   for( i=0; i<F; i++ ) {
+      //dice \delta (offest of pixel) Eq. (2), (3)
+      //dice thr
     order1=(uint32*) order+i*N; data1=(float*) data+i*size_t(N);
     for( j=0; j<H; j++ ) { Wl[j]=0; Wr[j]=W[j]; } gl=wl=0; gr=g; wr=w;
+    //loop over pixels
     for( j=0; j<N-1; j++ ) {
       j1=order1[j]; j2=order1[j+1]; h=hs[j1]-1;
       if(split==0) {
@@ -60,7 +63,14 @@ void forestFindThr( int H, int N, int F, const float *data,
         wl+=ws[j1]; Wl[h]+=ws[j1]; wr-=ws[j1]; Wr[h]-=ws[j1];
         g=0; for( int h1=0; h1<H; h1++ ) g+=fabs(Wl[h1]/wl-Wr[h1]/wr);
         v = - wl/w*wr/w*g*g;
+      } else if (splitt==3) { //entropy Eq. (4), (5)
+          //implement something
+          
+          //break criteria
+            //1. one leaf consists of one data point
+            //2. max. depth reached
       }
+      
       if( v<vBst && data1[j2]-data1[j1]>=1e-6f ) {
         vBst=v; fid=i+1; thr=0.5f*(data1[j1]+data1[j2]); }
     }
