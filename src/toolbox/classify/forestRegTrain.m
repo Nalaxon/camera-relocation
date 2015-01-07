@@ -111,14 +111,17 @@ while( k < K )
   % train split and continue
   fids1=wswor(fWts,F1,4); data1=data(dids1,fids1);
   [~,order1]=sort(data1); order1=uint32(order1-1);
-  [fid,thr,gain]=forestRegFindThr(data1,ys1,dWts(dids1),order1,H,split); %TODO: find splits, idee: mehrere zufällige werte, berechne objective function (entropie) für jeden, behalte den besten
+  
+  %test123
+  
+  [fid,thr,gain]=forestRegFindThr(data1,ys1,dWts(dids1),order1,H,split); %TODO: find splits, idee: mehrere zuf??llige werte, berechne objective function (entropie) f??r jeden, behalte den besten
                                                                       %TODO: danach objective function vom paper implementieren!
   fid=fids1(fid); left=data(dids1,fid)<thr; count0=nnz(left);
   if( gain>1e-10 && count0>=minChild && (n1-count0)>=minChild )
     child(k)=K; fids(k)=fid-1; thrs(k)=thr;
     dids{K}=dids1(left); dids{K+1}=dids1(~left);
-    means(K)=mean(data1(left)); means(K+1)=mean(data1(~left));         %TODO: berechne gaussian der übrig gebliebenen regression targets ys (m im paper)?
-    variances(K)=var(data1(left)); variances(K+1)=var(data1(~left));
+    means(K)=mean(ys1(left)); means(K+1)=mean(ys1(~left));         %TODO: berechne gaussian der ??brig gebliebenen regression targets ys (m im paper)?
+    variances(K)=var(double(ys1(left))); variances(K+1)=var(double(ys1(~left)));
     depth(K:K+1)=depth(k)+1; K=K+2;
   end; k=k+1;
 end
