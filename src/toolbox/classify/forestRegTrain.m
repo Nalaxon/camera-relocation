@@ -111,9 +111,6 @@ while( k < K )
   % train split and continue
   fids1=wswor(fWts,F1,4); data1=data(dids1,fids1);
   [~,order1]=sort(data1); order1=uint32(order1-1);
-  
-  %test123
-  
   [fid,thr,gain]=forestRegFindThr(data1,ys1,dWts(dids1),order1,H,split); %TODO: find splits, idee: mehrere zuf??llige werte, berechne objective function (entropie) f??r jeden, behalte den besten
                                                                       %TODO: danach objective function vom paper implementieren!
   fid=fids1(fid); left=data(dids1,fid)<thr; count0=nnz(left);
@@ -123,6 +120,7 @@ while( k < K )
     means(K)=mean(ys1(left)); means(K+1)=mean(ys1(~left));         %TODO: berechne gaussian der ??brig gebliebenen regression targets ys (m im paper)?
     variances(K)=var(double(ys1(left))); variances(K+1)=var(double(ys1(~left)));
     depth(K:K+1)=depth(k)+1; K=K+2;
+
   end; k=k+1;
 end
 % create output model struct

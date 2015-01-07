@@ -8,7 +8,7 @@
 %do not forget load toolbox ;-)
 
 %define forst configuration
-N=1000; d=2; H=5;
+N=10000; d=5; H=5;
 [xs0, hs0, xs1, hs1] = demoGenData(N, N,H,d,1,1);
 xs0=single(xs0); xs1=single(xs1);
 
