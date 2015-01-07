@@ -80,16 +80,19 @@ void forestFindThr( int H, int N, int F, const float *data,
             //1. one leaf consists of one data point
             //2. max. depth reached
       }
-      
-      if( v<vBst && data1[j2]-data1[j1]>=1e-6f ) {
-          vBst=v; fid=i+1; thr=0.5f*(data1[j1]+data1[j2]); }
-
+      if (split != 3) {
+          if( v<vBst && data1[j2]-data1[j1]>=1e-6f ) {
+              vBst=v; fid=i+1; thr=0.5f*(data1[j1]+data1[j2]); }
+      }
     }
     //make it a mean
     yl_avg /= yl_count;
     yr_avg /= yr_count;
   }
-  
+  //to find best fit we may need a special treatment
+  if (split == 3) {
+      //TODO: do it
+  }
   delete [] Wl; delete [] Wr; delete [] W; gain = vInit-vBst;
 }
 
