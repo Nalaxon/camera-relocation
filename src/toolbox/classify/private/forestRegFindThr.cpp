@@ -29,8 +29,8 @@ void forestFindThr( int H, int N, int F, const float *data,
   uint32 &fid, float &thr, double &gain )
 {
   double *Wl, *Wr, *W; float *data1; uint32 *order1;
-  int i, j, j1, j2, h; double vBst, vInit, v, w, wl, wr, g, gl, gr;
-  int yl_count, yr_count, p, P=5; double yl, yr, yl_avg, yr_avg;
+  int i, j, e, j1, j2, h; double vBst, vInit, v, w, wl, wr, g, gl, gr;
+  int yl_count = 0, yr_count = 0, p, P=5; double yl, yr, yl_avg, yr_avg;
   Wl=new double[H]; Wr=new double[H]; W=new double[H];
   // perform initialization
   vBst = vInit = 0; g = 0; w = 0; fid = 1; thr = 0;
@@ -70,10 +70,10 @@ void forestFindThr( int H, int N, int F, const float *data,
           //implement something
           if (data1[j1] < thr) {
               yl_avg += ys[j1];
-              ++yl_count;
+              Wl[yl_count++] = j1;
           } else {
               yr_avg += ys[j1];
-              ++yr_count;
+              Wr[yr_count++] = j1;
           }
           
           //break criteria
@@ -91,7 +91,23 @@ void forestFindThr( int H, int N, int F, const float *data,
   }
   //to find best fit we may need a special treatment
   if (split == 3) {
-      //TODO: do it
+      vBst = 10000;
+      double vl, vr;
+      
+      //loop again over pixels to find best fit
+      for( j=0; j<N-1; j++ ) {
+          for(e=0; e<yl_count; e++) {
+              h = Wl[e];
+              v = abs(ys[h] - yl_avg);
+              vl += v*v;
+          }
+          
+          for(e=0; e<yr_count; e++) {
+              h = Wr[e];
+              v = abs(ys[h] - yr_avg);
+              vr += v*v;
+          }
+      }
   }
   delete [] Wl; delete [] Wr; delete [] W; gain = vInit-vBst;
 }
