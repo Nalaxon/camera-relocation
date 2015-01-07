@@ -128,6 +128,7 @@ K=1:K-1; ysn=[ysn{K}]';
 tree=struct('fids',fids(K),'thrs',thrs(K),'child',child(K),...
   'distr',distr(K,:),'ys',ysn,'count',count(K),'depth',depth(K),...
   'mean', means(K), 'var', variances(K));
+%test if symoblic link is working as we expected
 end
 
 function ids = wswor( prob, N, trials )
