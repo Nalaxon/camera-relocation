@@ -19,10 +19,10 @@ pTrain={'maxDepth', 50, 'F1', 2 'M', 150, 'minChild', 5, 'H', H};
 tic, forest=forestRegTrain(xs0, hs0, pTrain{:}); toc
 
 %apply forst on first dataset
-hsPr0 = forestApply(xs0, forest);
+hsPr0 = forestRegApply(xs0, forest);
 
 %apply forst on second dataset
-hsPr1 = forestApply(xs1, forest);
+hsPr1 = forestRegApply(xs1, forest);
 
 %some output they thought is usefull
 e0=mean(hsPr0~=hs0); e1=mean(hsPr1~=hs1);

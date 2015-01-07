@@ -1,4 +1,4 @@
-function forest = forestRegTrain( data, hs, varargin )
+function forest = forestRegTrain( data, ys, varargin )
 % Train random forest classifier.
 %
 % Dimensions:
@@ -8,14 +8,14 @@ function forest = forestRegTrain( data, hs, varargin )
 %  H - number classes
 %
 % USAGE
-%  forest = forestTrain( data, hs, [varargin] )
+%  forest = forestTrain( data, ys, [varargin] )
 %
 % INPUTS
 %  data     - [NxF] N length F feature vectors
-%  hs       - [Nx1] regressor output target -> m im paper
+%  ys       - [Nx1] regressor output target -> m im paper
 %  varargin - additional params (struct or name/value pairs)
 %   .M          - [1] number of trees to train
-%   .H          - [max(hs)] number of classes
+%   .H          - [max(ys)] number of classes
 %   .N1         - [5*N/M] number of data points for training each tree
 %   .F1         - [sqrt(F)] number features to sample for each node split
 %   .split      - ['gini'] options include 'gini', 'entropy' and 'twoing'
@@ -31,23 +31,23 @@ function forest = forestRegTrain( data, hs, varargin )
 %   .thrs     - [Kx1] threshold corresponding to each fid
 %   .child    - [Kx1] index of child for each node
 %   .distr    - [KxH] prob distribution at each node
-%   .hs       - [Kx1] or {Kx1} most likely label at each node
+%   .ys       - [Kx1] or {Kx1} most likely label at each node
 %   .count    - [Kx1] number of data points at each node
 %   .depth    - [Kx1] depth of each node
 %
 % EXAMPLE
-%  N=10000; H=5; d=2; [xs0,hs0,xs1,hs1]=demoGenData(N,N,H,d,1,1);
+%  N=10000; H=5; d=2; [xs0,ys0,xs1,ys1]=demoGenData(N,N,H,d,1,1);
 %  xs0=single(xs0); xs1=single(xs1);
 %  pTrain={'maxDepth',50,'F1',2,'M',150,'minChild',5};
-%  tic, forest=forestTrain(xs0,hs0,pTrain{:}); toc
-%  hsPr0 = forestApply(xs0,forest);
-%  hsPr1 = forestApply(xs1,forest);
-%  e0=mean(hsPr0~=hs0); e1=mean(hsPr1~=hs1);
+%  tic, forest=forestTrain(xs0,ys0,pTrain{:}); toc
+%  ysPr0 = forestApply(xs0,forest);
+%  ysPr1 = forestApply(xs1,forest);
+%  e0=mean(ysPr0~=ys0); e1=mean(ysPr1~=ys1);
 %  fprintf('errors trn=%f tst=%f\n',e0,e1); figure(1);
-%  subplot(2,2,1); visualizeData(xs0,2,hs0);
-%  subplot(2,2,2); visualizeData(xs0,2,hsPr0);
-%  subplot(2,2,3); visualizeData(xs1,2,hs1);
-%  subplot(2,2,4); visualizeData(xs1,2,hsPr1);
+%  subplot(2,2,1); visualizeData(xs0,2,ys0);
+%  subplot(2,2,2); visualizeData(xs0,2,ysPr0);
+%  subplot(2,2,3); visualizeData(xs1,2,ys1);
+%  subplot(2,2,4); visualizeData(xs1,2,ysPr1);
 %
 % See also forestApply, fernsClfTrain
 %
@@ -61,9 +61,9 @@ dfs={ 'M',1, 'H',[], 'N1',[], 'F1',[], 'split','gini', 'minCount',1, ...
   'minChild',1, 'maxDepth',64, 'dWts',[], 'fWts',[] };
 [M,H,N1,F1,splitStr,minCount,minChild,maxDepth,dWts,fWts] = ...
   getPrmDflt(varargin,dfs,1);
-[N,F]=size(data); assert(length(hs)==N);
+[N,F]=size(data); assert(length(ys)==N);
 minChild=max(1,minChild); minCount=max([1 minCount minChild]);
-if(isempty(H)), H=max(hs); end; assert(all(hs>0 & hs<=H));
+if(isempty(H)), H=max(ys); end; assert(all(ys>0 & ys<=H));
 if(isempty(N1)), N1=round(5*N/M); end; N1=min(N,N1);
 if(isempty(F1)), F1=round(sqrt(F)); end; F1=min(F,F1);
 if(isempty(dWts)), dWts=ones(1,N,'single'); end; dWts=dWts/sum(dWts);
@@ -73,24 +73,24 @@ if(isempty(split)), error('unknown splitting criteria: %s',splitStr); end
 
 % make sure data has correct types
 if(~isa(data,'single')), data=single(data); end
-if(~isa(hs,'uint32')), hs=uint32(hs); end
+if(~isa(ys,'uint32')), ys=uint32(ys); end
 if(~isa(fWts,'single')), fWts=single(fWts); end
 if(~isa(dWts,'single')), dWts=single(dWts); end
 
 % train M random trees on different subsets of data
 prmTree = {H,F1,minCount,minChild,maxDepth,fWts,split};
 for i=1:M
-  if(N==N1), data1=data; hs1=hs; dWts1=dWts; else
-    d=wswor(dWts,N1,4); data1=data(d,:); hs1=hs(d);
+  if(N==N1), data1=data; ys1=ys; dWts1=dWts; else
+    d=wswor(dWts,N1,4); data1=data(d,:); ys1=ys(d);
     dWts1=dWts(d); dWts1=dWts1/sum(dWts1);
   end
-  tree = treeTrain(data1,hs1,dWts1,prmTree);
+  tree = treeTrain(data1,ys1,dWts1,prmTree);
   if(i==1), forest=tree(ones(M,1)); else forest(i)=tree; end
 end
 
 end
 
-function tree = treeTrain( data, hs, dWts, prmTree )
+function tree = treeTrain( data, ys, dWts, prmTree )
 % Train single random tree.
 [H,F1,minCount,minChild,maxDepth,fWts,split,]=deal(prmTree{:});
 N=size(data,1); %data size
@@ -99,32 +99,33 @@ K=2*N-1; %maximal number of nodes. E.g.: 2 nodes = 3
 thrs=zeros(K,1,'single'); distr=zeros(K,H,'single');
 fids=zeros(K,1,'uint32'); child=fids; count=fids; depth=fids;
 means=zeros(K,1, 'double'); variances=zeros(K,1, 'double');
-hsn=cell(K,1); dids=cell(K,1); dids{1}=uint32(1:N);
+ysn=cell(K,1); dids=cell(K,1); dids{1}=uint32(1:N);
 k=1; K=2; %k.. current node; K.. current number of nodes
 while( k < K )
   % get node data and store distribution
-  dids1=dids{k}; dids{k}=[]; hs1=hs(dids1); n1=length(hs1); count(k)=n1;
+  dids1=dids{k}; dids{k}=[]; ys1=ys(dids1); n1=length(ys1); count(k)=n1;
 
+  distr(k,:)=histc(ys1,1:H)/n1; [~,ysn{k}]=max(distr(k,:));
   % if pure node or insufficient data don't train split
   if( n1<=minCount || depth(k)>maxDepth ), k=k+1; continue; end
   % train split and continue
   fids1=wswor(fWts,F1,4); data1=data(dids1,fids1);
   [~,order1]=sort(data1); order1=uint32(order1-1);
-  [fid,thr,gain]=forestFindThr(data1,hs1,dWts(dids1),order1,H,split); %TODO: find splits, idee: mehrere zufällige werte, berechne objective function (entropie) für jeden, behalte den besten
+  [fid,thr,gain]=forestFindThr(data1,ys1,dWts(dids1),order1,H,split); %TODO: find splits, idee: mehrere zufällige werte, berechne objective function (entropie) für jeden, behalte den besten
                                                                       %TODO: danach objective function vom paper implementieren!
   fid=fids1(fid); left=data(dids1,fid)<thr; count0=nnz(left);
   if( gain>1e-10 && count0>=minChild && (n1-count0)>=minChild )
     child(k)=K; fids(k)=fid-1; thrs(k)=thr;
     dids{K}=dids1(left); dids{K+1}=dids1(~left);
-    means(K)=mean(data1(left)); means(K+1)=mean(data1(~left));         %TODO: berechne gaussian der übrig gebliebenen regression targets hs (m im paper)?
+    means(K)=mean(data1(left)); means(K+1)=mean(data1(~left));         %TODO: berechne gaussian der übrig gebliebenen regression targets ys (m im paper)?
     variances(K)=var(data1(left)); variances(K+1)=var(data1(~left));
     depth(K:K+1)=depth(k)+1; K=K+2;
   end; k=k+1;
 end
 % create output model struct
-K=1:K-1; hsn=[hsn{K}]';
+K=1:K-1; ysn=[ysn{K}]';
 tree=struct('fids',fids(K),'thrs',thrs(K),'child',child(K),...
-  'distr',distr(K,:),'hs',hsn,'count',count(K),'depth',depth(K),...
+  'distr',distr(K,:),'ys',ysn,'count',count(K),'depth',depth(K),...
   'mean', means(K), 'var', variances(K));
 end
 
