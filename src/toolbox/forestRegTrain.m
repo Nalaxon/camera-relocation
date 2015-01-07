@@ -24,8 +24,6 @@ function forest = forestRegTrain( data, hs, varargin )
 %   .maxDepth   - [64] maximum depth of tree
 %   .dWts       - [] weights used for sampling and weighing each data point
 %   .fWts       - [] weights used for sampling features
-%   .discretize - [] optional function mapping structured to class labels
-%                    format: [hsClass,hBest] = discretize(hsStructured,H);
 %
 % OUTPUTS
 %  forest   - learned forest model struct array w the following fields
@@ -60,12 +58,12 @@ function forest = forestRegTrain( data, hs, varargin )
 
 % get additional parameters and fill in remaining parameters
 dfs={ 'M',1, 'H',[], 'N1',[], 'F1',[], 'split','gini', 'minCount',1, ...
-  'minChild',1, 'maxDepth',64, 'dWts',[], 'fWts',[], 'discretize','' };
-[M,H,N1,F1,splitStr,minCount,minChild,maxDepth,dWts,fWts,discretize] = ...
+  'minChild',1, 'maxDepth',64, 'dWts',[], 'fWts',[] };
+[M,H,N1,F1,splitStr,minCount,minChild,maxDepth,dWts,fWts] = ...
   getPrmDflt(varargin,dfs,1);
-[N,F]=size(data); assert(length(hs)==N); discr=~isempty(discretize);
+[N,F]=size(data); assert(length(hs)==N);
 minChild=max(1,minChild); minCount=max([1 minCount minChild]);
-if(isempty(H)), H=max(hs); end; assert(discr || all(hs>0 & hs<=H));
+if(isempty(H)), H=max(hs); end; assert(all(hs>0 & hs<=H));
 if(isempty(N1)), N1=round(5*N/M); end; N1=min(N,N1);
 if(isempty(F1)), F1=round(sqrt(F)); end; F1=min(F,F1);
 if(isempty(dWts)), dWts=ones(1,N,'single'); end; dWts=dWts/sum(dWts);
@@ -75,12 +73,12 @@ if(isempty(split)), error('unknown splitting criteria: %s',splitStr); end
 
 % make sure data has correct types
 if(~isa(data,'single')), data=single(data); end
-if(~isa(hs,'uint32') && ~discr), hs=uint32(hs); end
+if(~isa(hs,'uint32')), hs=uint32(hs); end
 if(~isa(fWts,'single')), fWts=single(fWts); end
 if(~isa(dWts,'single')), dWts=single(dWts); end
 
 % train M random trees on different subsets of data
-prmTree = {H,F1,minCount,minChild,maxDepth,fWts,split,discretize};
+prmTree = {H,F1,minCount,minChild,maxDepth,fWts,split};
 for i=1:M
   if(N==N1), data1=data; hs1=hs; dWts1=dWts; else
     d=wswor(dWts,N1,4); data1=data(d,:); hs1=hs(d);
@@ -94,10 +92,10 @@ end
 
 function tree = treeTrain( data, hs, dWts, prmTree )
 % Train single random tree.
-[H,F1,minCount,minChild,maxDepth,fWts,split,discretize,]=deal(prmTree{:});
+[H,F1,minCount,minChild,maxDepth,fWts,split,]=deal(prmTree{:});
 N=size(data,1); %data size
 K=2*N-1; %maximal number of nodes. E.g.: 2 nodes = 3
-discr=~isempty(discretize);
+
 thrs=zeros(K,1,'single'); distr=zeros(K,H,'single');
 fids=zeros(K,1,'uint32'); child=fids; count=fids; depth=fids;
 means=zeros(K,1, 'double'); variances=zeros(K,1, 'double');
@@ -106,12 +104,9 @@ k=1; K=2; %k.. current node; K.. current number of nodes
 while( k < K )
   % get node data and store distribution
   dids1=dids{k}; dids{k}=[]; hs1=hs(dids1); n1=length(hs1); count(k)=n1;
-  if(discr), [hs1,hsn{k}]=feval(discretize,hs1,H); hs1=uint32(hs1); end
-  if(discr), assert(all(hs1>0 & hs1<=H)); end; pure=all(hs1(1)==hs1);
-  if(~discr), if(pure), distr(k,hs1(1))=1; hsn{k}=hs1(1); else
-      distr(k,:)=histc(hs1,1:H)/n1; [~,hsn{k}]=max(distr(k,:)); end; end
+
   % if pure node or insufficient data don't train split
-  if( pure || n1<=minCount || depth(k)>maxDepth ), k=k+1; continue; end
+  if( n1<=minCount || depth(k)>maxDepth ), k=k+1; continue; end
   % train split and continue
   fids1=wswor(fWts,F1,4); data1=data(dids1,fids1);
   [~,order1]=sort(data1); order1=uint32(order1-1);
@@ -127,7 +122,7 @@ while( k < K )
   end; k=k+1;
 end
 % create output model struct
-K=1:K-1; if(discr), hsn={hsn(K)}; else hsn=[hsn{K}]'; end
+K=1:K-1; hsn=[hsn{K}]';
 tree=struct('fids',fids(K),'thrs',thrs(K),'child',child(K),...
   'distr',distr(K,:),'hs',hsn,'count',count(K),'depth',depth(K),...
   'mean', means(K), 'var', variances(K));

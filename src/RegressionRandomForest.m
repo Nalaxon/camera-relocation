@@ -16,7 +16,7 @@ xs0=single(xs0); xs1=single(xs1);
 pTrain={'maxDepth', 50, 'F1', 2 'M', 150, 'minChild', 5, 'H', H};
 
 %train forst
-tic, forest=forestTrain(xs0, hs0, pTrain{:}); toc
+tic, forest=forestRegTrain(xs0, hs0, pTrain{:}); toc
 
 %apply forst on first dataset
 hsPr0 = forestApply(xs0, forest);
