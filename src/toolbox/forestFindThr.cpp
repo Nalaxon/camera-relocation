@@ -63,7 +63,7 @@ void forestFindThr( int H, int N, int F, const float *data,
         wl+=ws[j1]; Wl[h]+=ws[j1]; wr-=ws[j1]; Wr[h]-=ws[j1];
         g=0; for( int h1=0; h1<H; h1++ ) g+=fabs(Wl[h1]/wl-Wr[h1]/wr);
         v = - wl/w*wr/w*g*g;
-      } else if (splitt==3) { //entropy Eq. (4), (5)
+      } else if (split==3) { //entropy Eq. (4), (5)
           //implement something
           
           //break criteria

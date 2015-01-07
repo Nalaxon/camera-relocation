@@ -121,7 +121,7 @@ while( k < K )
     child(k)=K; fids(k)=fid-1; thrs(k)=thr;
     dids{K}=dids1(left); dids{K+1}=dids1(~left);
     means(K)=mean(data1(left)); means(K+1)=mean(data1(~left));
-    variances(K)=var(datforea1(left)); variances(K+1)=var(data1(~left));
+    variances(K)=var(data1(left)); variances(K+1)=var(data1(~left));
     depth(K:K+1)=depth(k)+1; K=K+2;
   end; k=k+1;
 end

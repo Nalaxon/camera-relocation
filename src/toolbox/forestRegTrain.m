@@ -12,7 +12,7 @@ function forest = forestRegTrain( data, hs, varargin )
 %
 % INPUTS
 %  data     - [NxF] N length F feature vectors
-%  hs       - [Nx1] or {Nx1} target output labels in [1,H]
+%  hs       - [Nx1] regressor output target -> m im paper
 %  varargin - additional params (struct or name/value pairs)
 %   .M          - [1] number of trees to train
 %   .H          - [max(hs)] number of classes
@@ -115,12 +115,13 @@ while( k < K )
   % train split and continue
   fids1=wswor(fWts,F1,4); data1=data(dids1,fids1);
   [~,order1]=sort(data1); order1=uint32(order1-1);
-  [fid,thr,gain]=forestFindThr(data1,hs1,dWts(dids1),order1,H,split);
+  [fid,thr,gain]=forestFindThr(data1,hs1,dWts(dids1),order1,H,split); %TODO: find splits, idee: mehrere zufällige werte, berechne objective function (entropie) für jeden, behalte den besten
+                                                                      %TODO: danach objective function vom paper implementieren!
   fid=fids1(fid); left=data(dids1,fid)<thr; count0=nnz(left);
   if( gain>1e-10 && count0>=minChild && (n1-count0)>=minChild )
     child(k)=K; fids(k)=fid-1; thrs(k)=thr;
     dids{K}=dids1(left); dids{K+1}=dids1(~left);
-    means(K)=mean(data1(left)); means(K+1)=mean(data1(~left));
+    means(K)=mean(data1(left)); means(K+1)=mean(data1(~left));         %TODO: berechne gaussian der übrig gebliebenen regression targets hs (m im paper)?
     variances(K)=var(data1(left)); variances(K+1)=var(data1(~left));
     depth(K:K+1)=depth(k)+1; K=K+2;
   end; k=k+1;
