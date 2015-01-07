@@ -8,6 +8,7 @@
 #include <stdint.h>
 #include <math.h>
 #include <mex.h>
+#include <stdlib.h>
 
 typedef unsigned int uint32;
 #define gini(p) p*p
@@ -29,6 +30,7 @@ void forestFindThr( int H, int N, int F, const float *data,
 {
   double *Wl, *Wr, *W; float *data1; uint32 *order1;
   int i, j, j1, j2, h; double vBst, vInit, v, w, wl, wr, g, gl, gr;
+  int yl_count, yr_count, p, P=5; double yl, yr, yl_avg, yr_avg;
   Wl=new double[H]; Wr=new double[H]; W=new double[H];
   // perform initialization
   vBst = vInit = 0; g = 0; w = 0; fid = 1; thr = 0;
@@ -40,6 +42,7 @@ void forestFindThr( int H, int N, int F, const float *data,
   for( i=0; i<F; i++ ) {
       //dice \delta (offest of pixel) Eq. (2), (3)
       //dice thr
+      thr = rand();
     order1=(uint32*) order+i*N; data1=(float*) data+i*size_t(N);
     for( j=0; j<H; j++ ) { Wl[j]=0; Wr[j]=W[j]; } gl=wl=0; gr=g; wr=w;
     //loop over pixels
@@ -65,6 +68,13 @@ void forestFindThr( int H, int N, int F, const float *data,
         v = - wl/w*wr/w*g*g;
       } else if (split==3) { //entropy Eq. (4), (5)
           //implement something
+          if (data1[j1] < thr) {
+              yl_avg += ys[j1];
+              ++yl_count;
+          } else {
+              yr_avg += ys[j1];
+              ++yr_count;
+          }
           
           //break criteria
             //1. one leaf consists of one data point
@@ -72,9 +82,14 @@ void forestFindThr( int H, int N, int F, const float *data,
       }
       
       if( v<vBst && data1[j2]-data1[j1]>=1e-6f ) {
-        vBst=v; fid=i+1; thr=0.5f*(data1[j1]+data1[j2]); }
+          vBst=v; fid=i+1; thr=0.5f*(data1[j1]+data1[j2]); }
+
     }
+    //make it a mean
+    yl_avg /= yl_count;
+    yr_avg /= yr_count;
   }
+  
   delete [] Wl; delete [] Wr; delete [] W; gain = vInit-vBst;
 }
 
