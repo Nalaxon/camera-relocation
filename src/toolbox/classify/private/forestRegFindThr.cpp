@@ -29,7 +29,7 @@ void forestFindThr( int H, int N, int F, const float *data,
   uint32 &fid, float &thr, double &gain )
 {
   double *Wl, *Wr, *W; float *data1; uint32 *order1;
-  int i, j, e, j1, j2, h; double vBst, vInit, v, w, wl, wr, g, gl, gr;
+  int i, j, e, j1, j2, h; double vBst, vInit, vOld, v, w, wl, wr, g, gl, gr;
   int yl_count = 0, yr_count = 0, p, P=5; double yl, yr, yl_avg, yr_avg, ys_avg;
   Wl=new double[H]; Wr=new double[H]; W=new double[H];
   
@@ -43,14 +43,14 @@ void forestFindThr( int H, int N, int F, const float *data,
   double error_best = -1;
   
   // perform initialization
-  vBst = vInit = 0; g = 0; w = 0; fid = 1; thr = 0;
+  vBst = vInit = vOld = 0; g = 0; w = 0; fid = 1; thr = 0;
   for( i=0; i<H; i++ ) W[i] = 0;
   for( j=0; j<N; j++ ) { w+=ws[j]; W[ys[j]-1]+=ws[j]; }
   if( split==0 ) { for( i=0; i<H; i++ ) g+=gini(W[i]); vBst=vInit=(1-g/w/w); }
   if( split==1 ) { for( i=0; i<H; i++ ) g+=entropy(W[i]); vBst=vInit=g/w; }
   // loop over features, then thresholds (data is sorted by feature value)
   
-  while((tries < maxtries) && (best_thr == -2))
+  while((tries < maxtries) && (vOld - vBst) < 1)
   {
     ++tries;
     //dice \delta (offest of pixel) Eq. (2), (3)
@@ -150,6 +150,7 @@ void forestFindThr( int H, int N, int F, const float *data,
       
       if(v < error_best)
       {
+        vOld = vBst;
         error_best = v; 
         vBst = v;
         fid = i+1; 
