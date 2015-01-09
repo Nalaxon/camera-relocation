@@ -68,7 +68,7 @@ if(isempty(N1)), N1=round(5*N/M); end; N1=min(N,N1);
 if(isempty(F1)), F1=round(sqrt(F)); end; F1=min(F,F1);
 if(isempty(dWts)), dWts=ones(1,N,'single'); end; dWts=dWts/sum(dWts);
 if(isempty(fWts)), fWts=ones(1,F,'single'); end; fWts=fWts/sum(fWts);
-split=find(strcmpi(splitStr,{'gini','entropy','twoing'}))-1;
+split=find(strcmpi(splitStr,{'gini','entropy','twoing','custom'}))-1;
 if(isempty(split)), error('unknown splitting criteria: %s',splitStr); end
 
 % make sure data has correct types
@@ -111,10 +111,11 @@ while( k < K )
   % train split and continue
   fids1=wswor(fWts,F1,4); data1=data(dids1,fids1);
   [~,order1]=sort(data1); order1=uint32(order1-1);
-  [fid,thr,gain]=forestRegFindThr(data1,ys1,dWts(dids1),order1,H, 3); %TODO: find splits, idee: mehrere zuf??llige werte, berechne objective function (entropie) f??r jeden, behalte den besten
+  tic; [fid,thr,gain]=forestRegFindThr(data1,ys1,dWts(dids1),order1,H, split); %TODO: find splits, idee: mehrere zuf??llige werte, berechne objective function (entropie) f??r jeden, behalte den besten
                                                                       %TODO: danach objective function vom paper implementieren!
+  toc;
   fid=fids1(fid); left=data(dids1,fid)<thr; count0=nnz(left);
-  if( gain>1e-10 && count0>=minChild && (n1-count0)>=minChild )
+  if( gain>1e-10 &&  count0>=minChild && (n1-count0)>=minChild )
     child(k)=K; fids(k)=fid-1; thrs(k)=thr;
     dids{K}=dids1(left); dids{K+1}=dids1(~left);
     means(K)=mean(ys1(left)); means(K+1)=mean(ys1(~left));         %TODO: berechne gaussian der ??brig gebliebenen regression targets ys (m im paper)?

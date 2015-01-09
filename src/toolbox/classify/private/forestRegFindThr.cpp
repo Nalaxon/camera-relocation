@@ -30,7 +30,7 @@ void forestFindThr( int H, int N, int F, const float *data,
 {
   double *Wl, *Wr, *W; float *data1; uint32 *order1;
   int i, j, e, j1, j2, h; double vBst, vInit, v, w, wl, wr, g, gl, gr;
-  int yl_count = 0, yr_count = 0, p, P=5; double yl, yr, yl_avg, yr_avg;
+  int yl_count = 0, yr_count = 0, p, P=5; double yl, yr, yl_avg, yr_avg, ys_avg;
   Wl=new double[H]; Wr=new double[H]; W=new double[H];
   
   
@@ -49,7 +49,7 @@ void forestFindThr( int H, int N, int F, const float *data,
   for( i=0; i<F; i++ ) {
       //dice \delta (offest of pixel) Eq. (2), (3)
       //dice thr
-      thr = rand();
+      thr = (rand()%2000+1)/2000.0f - 1.0f;
     order1=(uint32*) order+i*N; data1=(float*) data+i*size_t(N);
     for( j=0; j<H; j++ ) { Wl[j]=0; Wr[j]=W[j]; } gl=wl=0; gr=g; wr=w;
     //loop over pixels
@@ -75,6 +75,9 @@ void forestFindThr( int H, int N, int F, const float *data,
         v = - wl/w*wr/w*g*g;
       } else if (split==3) { //entropy Eq. (4), (5)
           //implement something
+          
+          ys_avg+= ys[j1];
+          
           if (data1[j1] < thr) {
               yl_avg += ys[j1];
               Wl[yl_count++] = j1;
@@ -98,6 +101,8 @@ void forestFindThr( int H, int N, int F, const float *data,
     //make it a mean
     yl_avg /= yl_count;
     yr_avg /= yr_count;
+    ys_avg = ys_avg / (yl_count+yr_count);
+    
     
     
     error_l=.0f;
@@ -106,6 +111,8 @@ void forestFindThr( int H, int N, int F, const float *data,
     if(split == 3){
       for( j=0; j<N-1; j++ ) {
         j1=order1[j]; j2=order1[j+1]; h=ys[j1]-1;
+        
+        vInit += (ys[j1]-ys_avg)*(ys[j1]-ys_avg);
         
         if(data1[j1]<thr)
         {
@@ -119,12 +126,17 @@ void forestFindThr( int H, int N, int F, const float *data,
       error_l = error_l / yl_count;
       error_r = error_r / yr_count;
       
-      if((error_l+error_r) < error_best)
+      v=(error_l+error_r);
+      
+      if(v < error_best)
       {
-        error_best = error_l; 
+        error_best = v; 
+        vBst = v;
         fid = i+1; 
         best_thr = thr;
       }
+      
+      vInit = vInit / (yl_count+yr_count);
       
     }
   }
