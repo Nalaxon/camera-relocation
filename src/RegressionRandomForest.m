@@ -1,4 +1,4 @@
-%Autor: Thomas Pitsch, Bernhard Rapp
+%Autor: Thomas Pietsch, Bernhard Rapp
 %Date:  23.10.2014
 %Version 0.1
 %Use Piotr's Matlab Toolbox [1] to train a regression random forest for camera
@@ -9,7 +9,7 @@
 
 
 
-
+toolboxCompile;
 
 
 %define forst configuration

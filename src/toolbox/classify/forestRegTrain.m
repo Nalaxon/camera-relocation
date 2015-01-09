@@ -115,7 +115,10 @@ while( k < K )
                                                                       %TODO: danach objective function vom paper implementieren!
   toc;
   fid=fids1(fid); left=data(dids1,fid)<thr; count0=nnz(left);
-  if( gain>1e-10 &&  count0>=minChild && (n1-count0)>=minChild )
+  if(thr == -2)
+      thr
+  end
+  if( gain>1e-10 &&  count0>=minChild && (n1-count0)>=minChild && thr ~= -2 )
     child(k)=K; fids(k)=fid-1; thrs(k)=thr;
     dids{K}=dids1(left); dids{K+1}=dids1(~left);
     means(K)=mean(ys1(left)); means(K+1)=mean(ys1(~left));         %TODO: berechne gaussian der ??brig gebliebenen regression targets ys (m im paper)?
