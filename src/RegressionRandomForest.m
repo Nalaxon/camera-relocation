@@ -9,7 +9,7 @@
 
 
 
-%toolboxCompile;
+toolboxRegCompile;
 
 
 %define forst configuration
