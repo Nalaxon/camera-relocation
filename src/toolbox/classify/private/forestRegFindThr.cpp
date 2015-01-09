@@ -32,6 +32,13 @@ void forestFindThr( int H, int N, int F, const float *data,
   int i, j, e, j1, j2, h; double vBst, vInit, v, w, wl, wr, g, gl, gr;
   int yl_count = 0, yr_count = 0, p, P=5; double yl, yr, yl_avg, yr_avg;
   Wl=new double[H]; Wr=new double[H]; W=new double[H];
+  
+  
+  float error_l=.0f;
+  float error_r=.0f;
+  float best_thr=-1.0f;
+  float error_best = 1000000.0f;
+  
   // perform initialization
   vBst = vInit = 0; g = 0; w = 0; fid = 1; thr = 0;
   for( i=0; i<H; i++ ) W[i] = 0;
@@ -80,35 +87,48 @@ void forestFindThr( int H, int N, int F, const float *data,
             //1. one leaf consists of one data point
             //2. max. depth reached
       }
+      
       if (split != 3) {
           if( v<vBst && data1[j2]-data1[j1]>=1e-6f ) {
               vBst=v; fid=i+1; thr=0.5f*(data1[j1]+data1[j2]); }
       }
     }
+    
+    
     //make it a mean
     yl_avg /= yl_count;
     yr_avg /= yr_count;
-  }
-  //to find best fit we may need a special treatment
-  if (split == 3) {
-      vBst = 10000;
-      double vl, vr;
-      
-      //loop again over pixels to find best fit
+    
+    
+    error_l=.0f;
+    error_r=.0f;
+    
+    if(split == 3){
       for( j=0; j<N-1; j++ ) {
-          for(e=0; e<yl_count; e++) {
-              h = Wl[e];
-              v = abs(ys[h] - yl_avg);
-              vl += v*v;
-          }
-          
-          for(e=0; e<yr_count; e++) {
-              h = Wr[e];
-              v = abs(ys[h] - yr_avg);
-              vr += v*v;
-          }
+        j1=order1[j]; j2=order1[j+1]; h=ys[j1]-1;
+        
+        if(data1[j1]<thr)
+        {
+          error_l+= (ys[j1]-yl_avg)*(ys[j1]-yl_avg);
+        }else
+        {
+          error_r+=(ys[j1]-yr_avg)*(ys[j1]-yr_avg);
+        }
       }
+      
+      error_l = error_l / yl_count;
+      error_r = error_r / yr_count;
+      
+      if((error_l+error_r) < error_best)
+      {
+        error_best = error_l; 
+        fid = i+1; 
+        best_thr = thr;
+      }
+      
+    }
   }
+
   delete [] Wl; delete [] Wr; delete [] W; gain = vInit-vBst;
 }
 
