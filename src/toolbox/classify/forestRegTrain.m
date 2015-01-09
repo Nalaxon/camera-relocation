@@ -8,7 +8,7 @@ function forest = forestRegTrain( data, ys, varargin )
 %  H - number classes
 %
 % USAGE
-%  forest = forestTrain( data, ys, [varargin] )
+%  forest = forestRegTrain( data, ys, [varargin] )
 %
 % INPUTS
 %  data     - [NxF] N length F feature vectors
@@ -96,29 +96,31 @@ function tree = treeTrain( data, ys, dWts, prmTree )
 N=size(data,1); %data size
 K=2*N-1; %maximal number of nodes. E.g.: 2 nodes = 3
 
-thrs=zeros(K,1,'single'); distr=zeros(K,H,'single');
+thrs=zeros(K,1,'single');
+if(split ~= 3), distr=zeros(K,H,'single'); else distr = zeros(K, 2, 'single'); end
 fids=zeros(K,1,'uint32'); child=fids; count=fids; depth=fids;
 means=zeros(K,1, 'double'); variances=zeros(K,1, 'double');
 ysn=cell(K,1); dids=cell(K,1); dids{1}=uint32(1:N);
 k=1; K=2; %k.. current node; K.. current number of nodes
 while( k < K )
-  % get node data and store distribution
   dids1=dids{k}; dids{k}=[]; ys1=ys(dids1); n1=length(ys1); count(k)=n1;
-
-  distr(k,:)=histc(ys1,1:H)/n1; [~,ysn{k}]=max(distr(k,:));
   % if pure node or insufficient data don't train split
   if( n1<=minCount || depth(k)>maxDepth ), k=k+1; continue; end
   % train split and continue
   fids1=wswor(fWts,F1,4); data1=data(dids1,fids1);
   [~,order1]=sort(data1); order1=uint32(order1-1);
-  tic; [fid,thr,gain]=forestRegFindThr(data1,ys1,dWts(dids1),order1,H, split); %TODO: find splits, idee: mehrere zuf??llige werte, berechne objective function (entropie) f??r jeden, behalte den besten
-                                                                      %TODO: danach objective function vom paper implementieren!
-  toc;
-  fid=fids1(fid); left=data(dids1,fid)<thr; count0=nnz(left);
-  if(thr == -2)
-      thr
+<<<<<<< HEAD
+  [fid,thr,gain]=forestRegFindThr(data1,ys1,dWts(dids1),order1,H,split); %TODO: find splits, idee: mehrere zuf??llige werte, berechne objective function (entropie) f??r jeden, behalte den besten
+  
+  % get node data and store distribution
+  if (split == 3)
+      distr(k, :) = [mean(ys1) var(double(ys1))];
+  else
+      distr(k,:)=histc(ys1,1:H)/n1; [~,ysn{k}]=max(distr(k,:));
   end
-  if( gain>1e-10 &&  count0>=minChild && (n1-count0)>=minChild && thr ~= -2 )
+  
+  fid=fids1(fid); left=data(dids1,fid)<thr; count0=nnz(left);
+  if( gain>1e-10 && count0>=minChild && (n1-count0)>=minChild )
     child(k)=K; fids(k)=fid-1; thrs(k)=thr;
     dids{K}=dids1(left); dids{K+1}=dids1(~left);
     means(K)=mean(ys1(left)); means(K+1)=mean(ys1(~left));         %TODO: berechne gaussian der ??brig gebliebenen regression targets ys (m im paper)?
