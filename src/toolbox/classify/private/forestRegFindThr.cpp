@@ -81,9 +81,11 @@ void forestFindThr( int H, int N, int F, const float *data,
           if (data1[j1] < thr) {
               yl_avg += ys[j1];
               //Wl[yl_count++] = j1;
+              ++yl_count;
           } else {
               yr_avg += ys[j1];
               //Wr[yr_count++] = j1;
+              ++yr_count;
           }
           
           //break criteria
