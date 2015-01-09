@@ -144,6 +144,7 @@ void forestFindThr( int H, int N, int F, const float *data,
     
   }
 
+  thr = best_thr;
   delete [] Wl; delete [] Wr; delete [] W; gain = vInit-vBst;
 }
 
