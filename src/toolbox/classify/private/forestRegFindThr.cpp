@@ -34,10 +34,10 @@ void forestFindThr( int H, int N, int F, const float *data,
   Wl=new double[H]; Wr=new double[H]; W=new double[H];
   
   
-  float error_l=.0f;
-  float error_r=.0f;
-  float best_thr=-1.0f;
-  float error_best = 1000000.0f;
+  double error_l=0;
+  double error_r=0;
+  double best_thr=-1;
+  double error_best = 1000000;
   
   // perform initialization
   vBst = vInit = 0; g = 0; w = 0; fid = 1; thr = 0;
@@ -80,10 +80,10 @@ void forestFindThr( int H, int N, int F, const float *data,
           
           if (data1[j1] < thr) {
               yl_avg += ys[j1];
-              Wl[yl_count++] = j1;
+              //Wl[yl_count++] = j1;
           } else {
               yr_avg += ys[j1];
-              Wr[yr_count++] = j1;
+              //Wr[yr_count++] = j1;
           }
           
           //break criteria
@@ -99,14 +99,14 @@ void forestFindThr( int H, int N, int F, const float *data,
     
     
     //make it a mean
-    yl_avg /= yl_count;
-    yr_avg /= yr_count;
+    yl_avg = yl_avg / yl_count;
+    yr_avg = yr_avg / yr_count;
     ys_avg = ys_avg / (yl_count+yr_count);
     
     
     
-    error_l=.0f;
-    error_r=.0f;
+    error_l=0;
+    error_r=0;
     
     if(split == 3){
       for( j=0; j<N-1; j++ ) {
@@ -139,6 +139,7 @@ void forestFindThr( int H, int N, int F, const float *data,
       vInit = vInit / (yl_count+yr_count);
       
     }
+    
   }
 
   delete [] Wl; delete [] Wr; delete [] W; gain = vInit-vBst;

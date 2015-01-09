@@ -111,9 +111,8 @@ while( k < K )
   % train split and continue
   fids1=wswor(fWts,F1,4); data1=data(dids1,fids1);
   [~,order1]=sort(data1); order1=uint32(order1-1);
-  tic; [fid,thr,gain]=forestRegFindThr(data1,ys1,dWts(dids1),order1,H, split); %TODO: find splits, idee: mehrere zuf??llige werte, berechne objective function (entropie) f??r jeden, behalte den besten
+  [fid,thr,gain]=forestRegFindThr(data1,ys1,dWts(dids1),order1,H, split); %TODO: find splits, idee: mehrere zuf??llige werte, berechne objective function (entropie) f??r jeden, behalte den besten
                                                                       %TODO: danach objective function vom paper implementieren!
-  toc;
   fid=fids1(fid); left=data(dids1,fid)<thr; count0=nnz(left);
   if( gain>1e-10 &&  count0>=minChild && (n1-count0)>=minChild )
     child(k)=K; fids(k)=fid-1; thrs(k)=thr;
