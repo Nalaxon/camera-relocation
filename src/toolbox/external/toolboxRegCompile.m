@@ -32,8 +32,7 @@ end
 optsOmp=[optsOmp '-DUSEOMP'];
 
 % list of files (missing /private/ part of directory)
-fs={'classify/forestRegFindThr.cpp', 'classify/forestFindThr.cpp',...
-  'classify/forestInds.cpp'};
+fs={'classify/forestRegFindThr.cpp'};
 n=length(fs); useOmp=zeros(1,n); useOmp([6 9])=1;
 
 % compile every funciton in turn (special case for dijkstra)
