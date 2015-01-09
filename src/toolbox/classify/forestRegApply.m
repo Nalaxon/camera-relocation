@@ -1,8 +1,8 @@
-function [ys,ps] = forestApply( data, forest, maxDepth, minCount, best )
+function [ys,ps] = forestRegApply( data, forest, maxDepth, minCount, best )
 % Apply learned forest classifier.
 %
 % USAGE
-%  [ys,ps] = forestApply( data, forest, [maxDepth], [minCount], [best] )
+%  [ys,ps] = forestRegApply( data, forest, [maxDepth], [minCount], [best] )
 %
 % INPUTS
 %  data     - [NxF] N length F feature vectors
