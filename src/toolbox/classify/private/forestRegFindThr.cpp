@@ -34,10 +34,13 @@ void forestFindThr( int H, int N, int F, const float *data,
   Wl=new double[H]; Wr=new double[H]; W=new double[H];
   
   
+  int tries = 0;
+  int maxtries = 500;
+  
   double error_l=0;
   double error_r=0;
-  double best_thr=-1;
-  double error_best = 1000000;
+  double best_thr=-2;
+  double error_best = -1;
   
   // perform initialization
   vBst = vInit = 0; g = 0; w = 0; fid = 1; thr = 0;
@@ -46,13 +49,23 @@ void forestFindThr( int H, int N, int F, const float *data,
   if( split==0 ) { for( i=0; i<H; i++ ) g+=gini(W[i]); vBst=vInit=(1-g/w/w); }
   if( split==1 ) { for( i=0; i<H; i++ ) g+=entropy(W[i]); vBst=vInit=g/w; }
   // loop over features, then thresholds (data is sorted by feature value)
+  
+  while((tries < maxtries) && (best_thr == -2))
+  {
+    ++tries;
+    //dice \delta (offest of pixel) Eq. (2), (3)
+    //dice thr
   for( i=0; i<F; i++ ) {
-      //dice \delta (offest of pixel) Eq. (2), (3)
-      //dice thr
-      thr = (rand()%2000+1)/2000.0f - 1.0f;
     order1=(uint32*) order+i*N; data1=(float*) data+i*size_t(N);
+    
+    thr = data1[(rand()%N)];
+    
     for( j=0; j<H; j++ ) { Wl[j]=0; Wr[j]=W[j]; } gl=wl=0; gr=g; wr=w;
     //loop over pixels
+    
+    yl_count = yr_count = 0;
+    ys_avg = yr_avg = yl_avg = 0;
+    
     for( j=0; j<N-1; j++ ) {
       j1=order1[j]; j2=order1[j+1]; h=ys[j1]-1;
       if(split==0) {
@@ -77,7 +90,6 @@ void forestFindThr( int H, int N, int F, const float *data,
           //implement something
           
           ys_avg+= ys[j1];
-          
           if (data1[j1] < thr) {
               yl_avg += ys[j1];
               //Wl[yl_count++] = j1;
@@ -129,6 +141,12 @@ void forestFindThr( int H, int N, int F, const float *data,
       error_r = error_r / yr_count;
       
       v=(error_l+error_r);
+      if(error_best == -1)
+      {
+        vInit = vInit / (yl_count+yr_count);
+        error_best = vInit;
+        
+      }
       
       if(v < error_best)
       {
@@ -138,12 +156,12 @@ void forestFindThr( int H, int N, int F, const float *data,
         best_thr = thr;
       }
       
-      vInit = vInit / (yl_count+yr_count);
-      
     }
-    
+  
+  }
   }
 
+  thr = best_thr;
   delete [] Wl; delete [] Wr; delete [] W; gain = vInit-vBst;
 }
 

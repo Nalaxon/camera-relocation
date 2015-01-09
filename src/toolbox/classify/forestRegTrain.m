@@ -109,6 +109,7 @@ while( k < K )
   % train split and continue
   fids1=wswor(fWts,F1,4); data1=data(dids1,fids1);
   [~,order1]=sort(data1); order1=uint32(order1-1);
+<<<<<<< HEAD
   [fid,thr,gain]=forestRegFindThr(data1,ys1,dWts(dids1),order1,H,split); %TODO: find splits, idee: mehrere zuf??llige werte, berechne objective function (entropie) f??r jeden, behalte den besten
   
   % get node data and store distribution
