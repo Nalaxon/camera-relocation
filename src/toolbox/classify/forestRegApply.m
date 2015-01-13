@@ -44,8 +44,7 @@ if(best), ps=histc(ys',1:H)'; end; [~,ys]=max(ps,[],2); ps=ps/M;
 %mu = mu/M; variance = variance/M;
 
 [foo, bar] = histc(mu',1:H);
-
-ys = round(mu);
+ys = max(foo)';
 pd = [mu variance];
 end
 
