@@ -1,4 +1,4 @@
-function [ys,ps] = forestRegApply( data, forest, maxDepth, minCount, best )
+function [ys,ps, pd] = forestRegApply( data, forest, maxDepth, minCount, best )
 % Apply learned forest classifier.
 %
 % USAGE
@@ -14,6 +14,7 @@ function [ys,ps] = forestRegApply( data, forest, maxDepth, minCount, best )
 % OUTPUTS
 %  ys       - [Nx1] predicted output labels
 %  ps       - [NxH] predicted output label probabilities
+%  pd       - [] predicted distribution
 %
 % EXAMPLE
 %
@@ -28,12 +29,18 @@ if(nargin<4 || isempty(minCount)), minCount=0; end
 if(nargin<5 || isempty(best)), best=0; end
 assert(isa(data,'single')); M=length(forest);
 H=size(forest(1).distr,2); N=size(data,1);
+mu = zeros(N,H);
+variance = zeros(N,H);
 if(best), ys=zeros(N,M); else ps=zeros(N,H); end
 for i=1:M, tree=forest(i);
   if(maxDepth>0), tree.child(tree.depth>=maxDepth) = 0; end
-  if(minCount>0), tree.child(tree.count<=minCount) = 0; end
+  if(minCount>0), tree.child(tree.count<=minCount) = 0; end 
   ids = forestInds(data,tree.thrs,tree.fids,tree.child);
   if(best), ys(:,i)=tree.ys(ids); else ps=ps+tree.distr(ids,:); end
+  mu = mu + tree.mean(ids,:);
+  variance = variance + tree.var(ids,:);
 end
 if(best), ps=histc(ys',1:H)'; end; [~,ys]=max(ps,[],2); ps=ps/M;
+mu = mu/M; variance = variance/M;
+pd = [mu variance];
 end
