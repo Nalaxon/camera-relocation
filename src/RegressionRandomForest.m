@@ -29,8 +29,6 @@ forest=forestRegTrain(xs0, hs0, pTrain{:});
 
 %some output they thought is usefull
 e0=mean(hsPr0~=hs0); e1=mean(hsPr1~=hs1);
-pd0;
-pd1;
 
 fprintf('errors trn=%f tst=%f\n', e0, e1); figure(1);
 figure(1);
