@@ -46,9 +46,4 @@ for i=1:n
     fprintf(' -> %s\n',[f e]); mex([f e],optsi{:},[f '.' mexext]);
   catch err, fprintf(errmsg,[f1 e],err.message); end
 end
-try %#ok<ALIGN>
-  d=[rd '/matlab/private/']; fprintf(' -> %s\n',[d 'dijkstra1.cpp']);
-  mex([d 'fibheap.cpp'], [d 'dijkstra1.cpp'], '-largeArrayDims', ...
-    opts{:}, [d 'dijkstra1.' mexext]);
-catch err, fprintf(errmsg,[f1 e],err.message); end
 disp('..................................Done Compiling'); toc;
