@@ -29,22 +29,24 @@ if(nargin<4 || isempty(minCount)), minCount=0; end
 if(nargin<5 || isempty(best)), best=0; end
 assert(isa(data,'single')); M=length(forest);
 H=size(forest(1).distr,2); N=size(data,1);
-mu = zeros(N,M);
-variance = zeros(N,N);
+mu = zeros(N,1);
+variance = zeros(N,1);
 if(best), ys=zeros(N,M); else ps=zeros(N,H); end
 for i=1:M, tree=forest(i);
   if(maxDepth>0), tree.child(tree.depth>=maxDepth) = 0; end
   if(minCount>0), tree.child(tree.count<=minCount) = 0; end 
   ids = forestInds(data,tree.thrs,tree.fids,tree.child);
   if(best), ys(:,i)=tree.ys(ids); else ps=ps+tree.distr(ids,:); end
-  mu(:,i) = round(tree.mean(ids));
-  variance(:,i) = tree.var(ids);
+  mu = mu + tree.mean(ids);
+  variance = variance + tree.var(ids);
+  %mu(:,i) = round(tree.mean(ids));
+  %variance(:,i) = tree.var(ids);
 end
 if(best), ps=histc(ys',1:H)'; end; [~,ys]=max(ps,[],2); ps=ps/M;
-%mu = mu/M; variance = variance/M;
+mu = mu/M; variance = variance/M;
 
-[foo, bar] = histc(mu',1:H);
-ys = max(foo)';
+%[foo, bar] = histc(mu',1:H);
+%[~,ys] = max(foo', [], 2);
 pd = [mu variance];
 end
 

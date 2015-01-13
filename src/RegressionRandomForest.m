@@ -11,12 +11,17 @@
 
 
 %define forst configuration
-N=10000; d=5; H=10;
-[xs0, hs0, xs1, hs1] = demoGenData(N, N,H,d,1,1);
-xs0=single(xs0); xs1=single(xs1);
+%N=10000; d=5; H=10;
+
+%clc; clear all;
+%[xs0, hs0, xs1, hs1] = demoGenData(N, N,H,d,1,1);
+M = csvread('camera-relocation/src/data/bike/day.csv');
+hs0 = M(:,16);
+xs0 = M(:,3:13);
+xs0=single(xs0); %xs1=single(xs1);
 
 %train forest
-pTrain={'maxDepth', 50, 'F1', 2 'M', 1500, 'minChild', 1, 'H', H, 'split', 'custom'};
+pTrain={'maxDepth', 50, 'F1', 2 'M', 1500, 'minChild', 1, 'split', 'custom'};
 
 %train forst
 forest=forestRegTrain(xs0, hs0, pTrain{:});
@@ -25,22 +30,21 @@ forest=forestRegTrain(xs0, hs0, pTrain{:});
 [hsPr0 ps0 pd0] = forestRegApply(xs0, forest);
 
 %apply forst on second dataset
-[hsPr1 ps1 pd1] = forestRegApply(xs1, forest);
+%[hsPr1 ps1 pd1] = forestRegApply(xs1, forest);
 
 %some output they thought is usefull
-e0=mean(hsPr0~=hs0); e1=mean(hsPr1~=hs1);
+e0=mean(hsPr0~=hs0); %e1=mean(hsPr1~=hs1);
 
-fprintf('errors trn=%f tst=%f\n', e0, e1); figure(1);
+fprintf('errors trn=%f \n', e0); figure(1);
+%fprintf('errors trn=%f tst=%f\n', e0, e1); figure(1);
 figure(1);
 subplot(3,2,1); visualizeData(xs0,2,hs0);
 subplot(3,2,2); visualizeData(xs0,2,hsPr0);
-subplot(3,2,3); visualizeData(xs1,2,hs1);
-subplot(3,2,4); visualizeData(xs1,2,hsPr1);
-t = -10:0.1:10;
+%subplot(3,2,3); visualizeData(xs1,2,hs1);
+%subplot(3,2,4); visualizeData(xs1,2,hsPr1);
+t = -1000:1:1000;
 
-subplot(3,2,5);
-plotDistribution(t, pd0, H);
+subplot(3,2,5); plotDistribution(t, pd0, H);
 
-subplot(3,2,6);
-plotDistribution(t, pd1, H);
+%subplot(3,2,6); plotDistribution(t, pd1, H);
 

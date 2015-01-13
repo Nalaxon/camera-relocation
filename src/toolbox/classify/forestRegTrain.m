@@ -63,7 +63,7 @@ dfs={ 'M',1, 'H',[], 'N1',[], 'F1',[], 'split','gini', 'minCount',1, ...
   getPrmDflt(varargin,dfs,1);
 [N,F]=size(data); assert(length(ys)==N);
 minChild=max(1,minChild); minCount=max([1 minCount minChild]);
-if(isempty(H)), H=max(ys); end; assert(all(ys>0 & ys<=H));
+if(isempty(H)), H=max(ys); end; assert(all(ys>0 & ys<=H)); %TODO: tidy up H
 if(isempty(N1)), N1=round(5*N/M); end; N1=min(N,N1);
 if(isempty(F1)), F1=round(sqrt(F)); end; F1=min(F,F1);
 if(isempty(dWts)), dWts=ones(1,N,'single'); end; dWts=dWts/sum(dWts);
