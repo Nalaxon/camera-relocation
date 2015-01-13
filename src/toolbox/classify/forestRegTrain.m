@@ -99,7 +99,7 @@ K=2*N-1; %maximal number of nodes. E.g.: 2 nodes = 3
 thrs=zeros(K,1,'single'); distr=zeros(K,H,'single');
 %if(split ~= 3), distr=zeros(K,H,'single'); else distr = zeros(K, 2, 'single'); end
 fids=zeros(K,1,'uint32'); child=fids; count=fids; depth=fids;
-means=zeros(K,H, 'double'); variances=zeros(K,H, 'double');
+means=zeros(K,1, 'double'); variances=zeros(K,1, 'double');
 ysn=cell(K,1); dids=cell(K,1); dids{1}=uint32(1:N);
 k=1; K=2; %k.. current node; K.. current number of nodes
 while( k < K )
