@@ -42,5 +42,6 @@ for i=1:M, tree=forest(i);
 end
 if(best), ps=histc(ys',1:H)'; end; [~,ys]=max(ps,[],2); ps=ps/M;
 mu = mu/M; variance = variance/M;
+ys = round(mu);
 pd = [mu variance];
 end
