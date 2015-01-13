@@ -21,7 +21,7 @@ xs0 = M(:,3:13);
 xs0=single(xs0); %xs1=single(xs1);
 
 %train forest
-pTrain={'maxDepth', 50, 'F1', 2 'M', 1500, 'minChild', 1, 'split', 'custom'};
+pTrain={'maxDepth', 50, 'F1', 2 'M', 150, 'minChild', 1, 'split', 'custom'};
 
 %train forst
 forest=forestRegTrain(xs0, hs0, pTrain{:});
