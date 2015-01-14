@@ -16,18 +16,18 @@ toolboxRegCompile;
 
 %clc; clear all;
 %[xs0, hs0, xs1, hs1] = demoGenData(N, N,H,d,1,1);
-M = csvread('../data/bike/day.csv');
-hs0 = M(:,16);
-xs0 = M(:,3:13);
-xs0=single(xs0); %xs1=single(xs1);
+%M = csvread('../data/bike/day.csv');
+%hs0 = M(:,16);
+%xs0 = M(:,3:13);
+%xs0=single(xs0); %xs1=single(xs1);
 
 
 %% generate toy data
-  %N=1000; sig=.5; f=@(x) cos(x*pi*4)+(x+1).^2;
-  %xs0=rand(N,1); hs0=f(xs0)+randn(N,1)*sig;
-  %xs1=rand(N,1); hs1=f(xs1)+randn(N,1)*sig;
-  %xs0=single(xs0);
-  %xs1=single(xs1);
+N=1000; sig=.5; f=@(x) cos(x*pi*4)+(x+1).^2;
+xs0=rand(N,1); hs0=f(xs0)+randn(N,1)*sig;
+xs1=rand(N,1); hs1=f(xs1)+randn(N,1)*sig;
+xs0=single(xs0);
+xs1=single(xs1);
 
 %train forest
 pTrain={'maxDepth', 50, 'F1', 4 'M', 50, 'minChild', 1, 'split', 'custom'};
@@ -56,6 +56,9 @@ subplot(2,2,2); visualizeData(xs0,2,hsPr0);
 t = 0:1:10000;
 
 subplot(2,2,3); plotDistribution(t, pd0);
+
+figure(2);
+  figure(1); clf; hold on; plot(xs0,hs0,'.b'); plot(xs0,hsPr0,'.r');
 
 %subplot(3,2,6); plotDistribution(t, pd1, H);
 
