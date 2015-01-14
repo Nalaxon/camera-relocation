@@ -31,7 +31,7 @@ void forestFindThr( int N, int F, const float *data,
 
   //double *Wl, *Wr, *W; 
   float *data1; uint32 *order1;
-  int i, j, j1, j2; double vBst, vInit, vOld, v;
+  int i, j, j1, j2; double vBst, vInit, v;
   int yl_count = 0, yr_count = 0; double yl, yr, yl_avg, yr_avg, ys_avg;
   //Wl=new double[H]; Wr=new double[H]; W=new double[H];
   
@@ -41,10 +41,9 @@ void forestFindThr( int N, int F, const float *data,
   double error_l=0;
   double error_r=0;
   double best_thr=-2;
-  double error_best = -1;
   
   // perform initialization
-  vBst = vInit = vOld = 0; fid = 1; thr = 0;
+  vBst = vInit =  -1; fid = 1; thr = 0;
   //for( i=0; i<H; i++ ) W[i] = 0;
   //for( j=0; j<N; j++ ) { w+=ws[j]; W[ys[j]-1]+=ws[j]; }
   //if( split==0 ) { for( i=0; i<H; i++ ) g+=gini(W[i]); vBst=vInit=(1-g/w/w); }
@@ -142,17 +141,15 @@ void forestFindThr( int N, int F, const float *data,
       error_r = error_r / (yl_count+yr_count);
       
       v=(error_l+error_r);
-      if(error_best == -1)
+      if(vBst == -1)
       {
         vInit = vInit / (yl_count+yr_count);
-        error_best = vInit;
+        vBst = vInit;
         
       }
       
-      if(v < error_best)
+      if(v < vBst)
       {
-        vOld = vBst;
-        error_best = v; 
         vBst = v;
         fid = i+1; 
         best_thr = thr;
