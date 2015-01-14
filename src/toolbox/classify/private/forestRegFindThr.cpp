@@ -126,14 +126,17 @@ void forestFindThr( int N, int F, const float *data,
       for( j=0; j<N-1; j++ ) {
         j1=order1[j];// j2=order1[j+1];// h=ys[j1]-1;
         
-        vInit += (ys[j1]-ys_avg)*(ys[j1]-ys_avg);
+        if(vBst == -1)
+        {
+          vInit += (ys[j1]-ys_avg)*(ys[j1]-ys_avg);
+        }
         
         if(data1[j1]<thr)
         {
-          error_l+= (ys[j1]-yl_avg)*(ys[j1]-yl_avg);
+          error_l += (ys[j1]-yl_avg)*(ys[j1]-yl_avg);
         }else
         {
-          error_r+=(ys[j1]-yr_avg)*(ys[j1]-yr_avg);
+          error_r += (ys[j1]-yr_avg)*(ys[j1]-yr_avg);
         }
       }
       
