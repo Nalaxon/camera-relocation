@@ -24,14 +24,14 @@ inline float flog2( float x ) {
 }
 
 // perform actual computation
-void forestFindThr( int H, int N, int F, const float *data,
+void forestFindThr( int N, int F, const float *data,
   const uint32 *ys, const float *ws, const uint32 *order, const int split,
   uint32 &fid, float &thr, double &gain )
 {
   double *Wl, *Wr, *W; float *data1; uint32 *order1;
   int i, j, e, j1, j2, h; double vBst, vInit, vOld, v, w, wl, wr, g, gl, gr;
   int yl_count = 0, yr_count = 0, p, P=5; double yl, yr, yl_avg, yr_avg, ys_avg;
-  Wl=new double[H]; Wr=new double[H]; W=new double[H];
+  //Wl=new double[H]; Wr=new double[H]; W=new double[H];
   
   
 
@@ -43,10 +43,10 @@ void forestFindThr( int H, int N, int F, const float *data,
   
   // perform initialization
   vBst = vInit = vOld = 0; g = 0; w = 0; fid = 1; thr = 0;
-  for( i=0; i<H; i++ ) W[i] = 0;
+  //for( i=0; i<H; i++ ) W[i] = 0;
   for( j=0; j<N; j++ ) { w+=ws[j]; W[ys[j]-1]+=ws[j]; }
-  if( split==0 ) { for( i=0; i<H; i++ ) g+=gini(W[i]); vBst=vInit=(1-g/w/w); }
-  if( split==1 ) { for( i=0; i<H; i++ ) g+=entropy(W[i]); vBst=vInit=g/w; }
+  //if( split==0 ) { for( i=0; i<H; i++ ) g+=gini(W[i]); vBst=vInit=(1-g/w/w); }
+  //if( split==1 ) { for( i=0; i<H; i++ ) g+=entropy(W[i]); vBst=vInit=g/w; }
   // loop over features, then thresholds (data is sorted by feature value)
   
   for(int k = 0; k < N-1; ++k)
@@ -58,7 +58,7 @@ void forestFindThr( int H, int N, int F, const float *data,
     
     thr = 0.5f*(data1[k]+data1[k+1]);
     
-    for( j=0; j<H; j++ ) { Wl[j]=0; Wr[j]=W[j]; } gl=wl=0; gr=g; wr=w;
+    //for( j=0; j<H; j++ ) { Wl[j]=0; Wr[j]=W[j]; } gl=wl=0; gr=g; wr=w;
     //loop over pixels
     
     yl_count = yr_count = 0;
@@ -82,7 +82,7 @@ void forestFindThr( int H, int N, int F, const float *data,
         // twoing: v = pl*pr*\sum_h(|p_h_left - p_h_right|)^2 [slow if H>>0]
         j1=order1[j]; j2=order1[j+1]; h=ys[j1]-1;
         wl+=ws[j1]; Wl[h]+=ws[j1]; wr-=ws[j1]; Wr[h]-=ws[j1];
-        g=0; for( int h1=0; h1<H; h1++ ) g+=fabs(Wl[h1]/wl-Wr[h1]/wr);
+        g=0; //for( int h1=0; h1<H; h1++ ) g+=fabs(Wl[h1]/wl-Wr[h1]/wr);
         v = - wl/w*wr/w*g*g;
       } else if (split==3) { //entropy Eq. (4), (5)
           //implement something
@@ -166,17 +166,17 @@ void forestFindThr( int H, int N, int F, const float *data,
 
 // [fid,thr,gain] = mexFunction(data,ys,ws,order,H,split);
 void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
-  int H, N, F, split; float *data, *ws, thr;
+  int  N, F, split; float *data, *ws, thr;
   double gain; uint32 *ys, *order, fid;
   data = (float*) mxGetData(prhs[0]);
   ys = (uint32*) mxGetData(prhs[1]);
   ws = (float*) mxGetData(prhs[2]);
   order = (uint32*) mxGetData(prhs[3]);
-  H = (int) mxGetScalar(prhs[4]);
+  //H = (int) mxGetScalar(prhs[4]);
   split = (int) mxGetScalar(prhs[5]);
   N = (int) mxGetM(prhs[0]);
   F = (int) mxGetN(prhs[0]);
-  forestFindThr(H,N,F,data,ys,ws,order,split,fid,thr,gain);
+  forestFindThr(N,F,data,ys,ws,order,split,fid,thr,gain);
   plhs[0] = mxCreateDoubleScalar(fid);
   plhs[1] = mxCreateDoubleScalar(thr);
   plhs[2] = mxCreateDoubleScalar(gain);

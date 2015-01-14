@@ -63,7 +63,7 @@ dfs={ 'M',1, 'H',[], 'N1',[], 'F1',[], 'split','gini', 'minCount',1, ...
   getPrmDflt(varargin,dfs,1);
 [N,F]=size(data); assert(length(ys)==N);
 minChild=max(1,minChild); minCount=max([1 minCount minChild]);
-if(isempty(H)), H=max(ys); end; assert(all(ys>0 & ys<=H)); %TODO: tidy up H
+%if(isempty(H)), H=max(ys); end; assert(all(ys<=H)); %TODO: tidy up H
 if(isempty(N1)), N1=round(5*N/M); end; N1=min(N,N1);
 if(isempty(F1)), F1=round(sqrt(F)); end; F1=min(F,F1);
 if(isempty(dWts)), dWts=ones(1,N,'single'); end; dWts=dWts/sum(dWts);
@@ -104,14 +104,14 @@ ysn=cell(K,1); dids=cell(K,1); dids{1}=uint32(1:N);
 k=1; K=2; %k.. current node; K.. current number of nodes
 while( k < K )
   dids1=dids{k}; dids{k}=[]; ys1=ys(dids1); n1=length(ys1); count(k)=n1;
-  distr(k,:)=histc(ys1,1:H)/n1; [~,ysn{k}]=max(distr(k,:));
+  %distr(k,:)=histc(ys1,1:H)/n1; [~,ysn{k}]=max(distr(k,:));
   
   % if pure node or insufficient data don't train split
   if( n1<=minCount || depth(k)>maxDepth ), k=k+1; continue; end
   % train split and continue
   fids1=wswor(fWts,F1,4); data1=data(dids1,fids1);
   [~,order1]=sort(data1); order1=uint32(order1-1);
-  [fid,thr,gain]=forestRegFindThr(data1,ys1,dWts(dids1),order1,H,split); %TODO: find splits, idee: mehrere zuf??llige werte, berechne objective function (entropie) f??r jeden, behalte den besten
+  [fid,thr,gain]=forestRegFindThr(data1,ys1,dWts(dids1),order1,split); %TODO: find splits, idee: mehrere zuf??llige werte, berechne objective function (entropie) f??r jeden, behalte den besten
   
   % get node data and store distribution
   %if (split == 3)
