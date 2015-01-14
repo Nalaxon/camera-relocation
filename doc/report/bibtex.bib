@@ -1,0 +1,171 @@
+@Inproceedings {shotton,
+abstract     = {<p>We address the problem of inferring the pose of an RGB-D camera relative to a
+                known 3D scene, given only a single acquired image. Our approach employs a
+                regression forest that is capable of inferring an estimate of each pixel’s
+                correspondence to 3D points in the scene’s world coordinate frame. The forest
+                uses only simple depth and RGB pixel comparison features, and does not require
+                the computation of feature descriptors. The forest is trained to be capable of
+                predicting correspondences at any pixel, so no interest point detectors are
+                required. The camera pose is inferred using a robust optimization scheme. This
+                starts with an initial set of hypothesized camera poses, constructed by applying
+                the forest at a small fraction of image pixels. Preemptive RANSAC then iterates
+                sampling more pixels at which to evaluate the forest, counting inliers, and
+                refining the hypothesized poses. We evaluate on several varied scenes captured
+                with an RGB-D camera and observe that the proposed technique achieves highly
+                accurate relocalization and substantially out-performs two state of the art
+                baselines.</p>},
+author       = {Jamie Shotton and Ben Glocker and Christopher Zach and Shahram Izadi and Antonio
+                Criminisi and Andrew Fitzgibbon},
+booktitle    = {Proc. Computer Vision and Pattern Recognition (CVPR)},
+month        = {June},
+publisher    = {IEEE},
+title        = {Scene Coordinate Regression Forests for Camera Relocalization in RGB-D Images},
+url          = {http://research.microsoft.com/apps/pubs/default.aspx?id=184826},
+year         = {2013},
+}
+
+@misc{piotr, 
+   author = {Piotr Doll\'ar}, 
+   title = {{P}iotr's {C}omputer {V}ision {M}atlab {T}oolbox ({PMT})}, 
+   howpublished = {\url{http://vision.ucsd.edu/~pdollar/toolbox/doc/index.html}} 
+}
+
+@Inproceedings {izadi_fusion,
+abstract     = {<p>KinectFusion enables a user holding and moving a standard Kinect camera to
+                rapidly create detailed 3D reconstructions of an indoor scene. Only the depth
+                data from Kinect is used to track the 3D pose of the sensor and reconstruct,
+                geometrically precise, 3D models of the physical scene in real-time. The
+                capabilities of KinectFusion, as well as the novel GPU-based pipeline are
+                described in full. We show uses of the core system for low-cost handheld
+                scanning, and geometry-aware augmented reality and physics-based interactions.
+                Novel extensions to the core GPU pipeline demonstrate object segmentation and
+                user interaction directly in front of the sensor, without degrading camera
+                tracking or reconstruction. These extensions are used to enable real-time
+                multi-touch interactions anywhere, allowing any planar or non-planar
+                reconstructed physical surface to be appropriated for touch.</p>},
+author       = {Shahram Izadi and David Kim and Otmar Hilliges and David Molyneaux and Richard
+                Newcombe and Pushmeet Kohli and Jamie Shotton and Steve Hodges and Dustin Freeman
+                and Andrew Davison and Andrew Fitzgibbon},
+month        = {October},
+publisher    = {ACM Symposium on User Interface Software and Technology},
+title        = {KinectFusion: Real-time 3D Reconstruction and Interaction Using a Moving Depth
+                Camera},
+url          = {http://research.microsoft.com/apps/pubs/default.aspx?id=155416},
+year         = {2011},
+}
+
+@Inproceedings {newcombe_fusion,
+abstract     = {<p>We present a system for accurate real-time mapping of complex and arbitrary
+                indoor scenes in variable lighting conditions, using only a moving low-cost depth
+                camera and commodity graphics hardware. We fuse all of the depth data streamed
+                from a Kinect sensor into a single global implicit surface model of the observed
+                scene in real-time. The current sensor pose is simultaneously obtained by
+                tracking the live depth frame relative to the global model using a coarse-to-fine
+                iterative closest point (ICP) algorithm, which uses all of the observed depth
+                data available. We demonstrate the advantages of tracking against the growing
+                full surface model compared with frame-to-frame tracking, obtaining tracking and
+                mapping results in constant time within room sized scenes with limited drift
+
+                and high accuracy. We also show both qualitative and quantitative results
+                relating to various aspects of our tracking and mapping system. Modelling of
+                natural scenes, in real-time with only commodity sensor and GPU hardware,
+                promises an exciting step forward
+
+                in augmented reality (AR), in particular, it allows dense surfaces to be
+                reconstructed in real-time, with a level of detail and robustness beyond any
+                solution yet presented using passive computer vision.</p>},
+author       = {Richard A. Newcombe and Shahram Izadi and Otmar Hilliges and David Molyneaux and
+                David Kim and Andrew J. Davison and Pushmeet Kohli and Jamie Shotton and Steve
+                Hodges and Andrew Fitzgibbon},
+booktitle    = {IEEE ISMAR},
+month        = {October},
+publisher    = {IEEE},
+title        = {KinectFusion: Real-Time Dense Surface Mapping and Tracking},
+url          = {http://research.microsoft.com/apps/pubs/default.aspx?id=155378},
+year         = {2011},
+}
+
+@article{ransac,
+  title={Preemptive RANSAC for live structure and motion estimation},
+  author={Nist{\'e}r, David},
+  journal={Machine Vision and Applications},
+  volume={16},
+  number={5},
+  pages={321--329},
+  year={2005},
+  publisher={Springer}
+}
+
+@misc{UCI ,
+author = "K. Bache and M. Lichman",
+year = "2013",
+title = "{UCI} Machine Learning Repository",
+url = "http://archive.ics.uci.edu/ml",
+institution = "University of California, Irvine, School of Information and Computer Sciences" }
+
+@inproceedings{DamenGMC12,
+  added-at = {2013-01-04T00:00:00.000+0100},
+  author = {Damen, Dima and Gee, Andrew P. and Mayol-Cuevas, Walterio W. and Calway, Andrew},
+  biburl = {http://www.bibsonomy.org/bibtex/2744101b4741ac6865c6eef2a02e083f3/dblp},
+  booktitle = {IROS},
+  crossref = {conf/iros/2012},
+  ee = {http://dx.doi.org/10.1109/IROS.2012.6385829},
+  interhash = {4eba1223a5e234993b1b47b35ee7dd04},
+  intrahash = {744101b4741ac6865c6eef2a02e083f3},
+  isbn = {978-1-4673-1737-5},
+  keywords = {dblp},
+  pages = {1029-1036},
+  publisher = {IEEE},
+  timestamp = {2013-01-04T00:00:00.000+0100},
+  title = {Egocentric Real-time Workspace Monitoring using an RGB-D camera.},
+  url = {http://dblp.uni-trier.de/db/conf/iros/iros2012.html#DamenGMC12},
+  year = 2012
+}
+
+@article{Comport10,
+author = "A.I. Comport and E. Malis and P. Rives",
+abstract = "In this paper we describe a new image-based approach to tracking the six-degree-of-freedom trajectory of a stereo camera pair. The proposed technique estimates the pose and subsequently the dense pixel matching between temporal image pairs in a sequence by performing dense spatial matching between images of a stereo reference pair. In this way a minimization approach is employed which directly uses all grayscale information available within the stereo pair (or stereo region) leading to very robust and precise results. Metric 3D structure constraints are imposed by consistently warping corresponding stereo images to generate novel viewpoints at each stereo acquisition. An iterative non-linear trajectory estimation approach is formulated based on a quadrifocal relationship between the image intensities within adjacent views of the stereo pair. A robust M-estimation technique is used to reject outliers corresponding to moving objects within the scene or other outliers such as occlusions and illumination changes. The technique is applied to recovering the trajectory of a moving vehicle in long and difficult sequences of images.",
+doi = "http://dx.doi.org/10.1177/0278364909356601",
+editor = "Guest Editors, F. Chaumette, P. Corke and P. Newman",
+journal = "International Journal of Robotics Research, Special issue on Robot Vision",
+keywords = "Stereo, Visual Odometry",
+number = "2-3",
+pages = "245-266",
+title = "{R}eal-time {Q}uadrifocal {V}isual {O}dometry",
+url = "http://www.i3s.unice.fr/~comport/publications/2010_ijrr_comport.pdf",
+volume = "29",
+year = "2010",
+}
+
+@inproceedings{DBLP:conf/bmvc/GeeM12,
+  author    = {Andrew P. Gee and
+               Walterio W. Mayol{-}Cuevas},
+  editor    = {Richard Bowden and
+               John P. Collomosse and
+               Krystian Mikolajczyk},
+  title     = {6D Relocalisation for {RGBD} Cameras Using Synthetic View Regression},
+  booktitle = {British Machine Vision Conference, {BMVC} 2012, Surrey, UK, September
+               3-7, 2012},
+  year      = {2012},
+  pages     = {1--11},
+  publisher = {{BMVA} Press},
+  url       = {http://dx.doi.org/10.5244/C.26.113},
+  doi       = {10.5244/C.26.113},
+  timestamp = {Sun, 09 Nov 2014 17:35:56 +0100},
+  biburl    = {http://dblp.uni-trier.de/rec/bib/conf/bmvc/GeeM12},
+  bibsource = {dblp computer science bibliography, http://dblp.org}
+}
+
+@INPROCEEDINGS{Klein08improvingthe,
+    author = {Georg Klein and David Murray},
+    title = {Improving the agility of keyframe-based SLAM},
+    booktitle = {In Proceedings of the European Conference on Computer Vision (ECCV},
+    year = {2008}
+}
+
+@INPROCEEDINGS{Henry10rgbdmapping,
+    author = {Peter Henry and Michael Krainin and Evan Herbst and Xiaofeng Ren and Dieter Fox},
+    title = {Rgbd mapping: Using depth cameras for dense 3d modeling of indoor environments},
+    booktitle = {In RGB-D: Advanced Reasoning with Depth Cameras Workshop in conjunction with RSS},
+    year = {2010}
+}
