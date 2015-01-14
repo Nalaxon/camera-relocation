@@ -6,6 +6,7 @@
 %[1] http://vision.ucsd.edu/~pdollar/toolbox/doc/index.html
 
 %do not forget load toolbox ;-)
+clear; clc; close all;
 
 toolboxRegCompile;
 
