@@ -26,6 +26,8 @@ toolboxRegCompile;
   N=1000; sig=.5; f=@(x) cos(x*pi*4)+(x+1).^2;
   xs0=rand(N,1); hs0=f(xs0)+randn(N,1)*sig;
   xs1=rand(N,1); hs1=f(xs1)+randn(N,1)*sig;
+  xs0=single(xs0);
+  xs1=single(xs1);
 
 %train forest
 pTrain={'maxDepth', 50, 'F1', 4 'M', 50, 'minChild', 1, 'split', 'custom'};

@@ -15,22 +15,24 @@ typedef unsigned int uint32;
 #define entropy(p) (-p*flog2(float(p)))
 
 // fast approximate log2(x) from Paul Mineiro <paul@mineiro.com>
-inline float flog2( float x ) {
+/*inline float flog2( float x ) {
   union { float f; uint32_t i; } vx = { x };
   union { uint32_t i; float f; } mx = { (vx.i & 0x007FFFFF) | 0x3f000000 };
   float y = float(vx.i); y *= 1.1920928955078125e-7f;
   return y - 124.22551499f - 1.498030302f * mx.f
     - 1.72587999f / (0.3520887068f + mx.f);
-}
+}*/
 
 // perform actual computation
 void forestFindThr( int N, int F, const float *data,
   const float *ys, const float *ws, const uint32 *order, const int split,
   uint32 &fid, float &thr, double &gain )
 {
-  double *Wl, *Wr, *W; float *data1; uint32 *order1;
-  int i, j, e, j1, j2, h; double vBst, vInit, vOld, v, w, wl, wr, g, gl, gr;
-  int yl_count = 0, yr_count = 0, p, P=5; double yl, yr, yl_avg, yr_avg, ys_avg;
+
+  //double *Wl, *Wr, *W; 
+  float *data1; uint32 *order1;
+  int i, j, j1, j2; double vBst, vInit, vOld, v;
+  int yl_count = 0, yr_count = 0; double yl, yr, yl_avg, yr_avg, ys_avg;
   //Wl=new double[H]; Wr=new double[H]; W=new double[H];
   
   
@@ -42,21 +44,22 @@ void forestFindThr( int N, int F, const float *data,
   double error_best = -1;
   
   // perform initialization
-  vBst = vInit = vOld = 0; g = 0; w = 0; fid = 1; thr = 0;
+  vBst = vInit = vOld = 0; fid = 1; thr = 0;
   //for( i=0; i<H; i++ ) W[i] = 0;
   //for( j=0; j<N; j++ ) { w+=ws[j]; W[ys[j]-1]+=ws[j]; }
   //if( split==0 ) { for( i=0; i<H; i++ ) g+=gini(W[i]); vBst=vInit=(1-g/w/w); }
   //if( split==1 ) { for( i=0; i<H; i++ ) g+=entropy(W[i]); vBst=vInit=g/w; }
   // loop over features, then thresholds (data is sorted by feature value)
   
-  for(int k = 0; k < N-1; ++k)
+  for(int k = 0; k < N-1; k++)
   {
     //dice \delta (offest of pixel) Eq. (2), (3)
     //dice thr
   for( i=0; i<F; i++ ) {
     order1=(uint32*) order+i*N; data1=(float*) data+i*size_t(N);
     
-    thr = 0.5f*(data1[k]+data1[k+1]);
+    
+    thr = 0.5*(data1[ order1[k] ] + data1[ order1[k+1] ]);
     
     //for( j=0; j<H; j++ ) { Wl[j]=0; Wr[j]=W[j]; } gl=wl=0; gr=g; wr=w;
     //loop over pixels
@@ -87,7 +90,7 @@ void forestFindThr( int N, int F, const float *data,
       } else */if (split==3) { //entropy Eq. (4), (5)
           //implement something
           
-          ys_avg+= ys[j1];
+          ys_avg += ys[j1];
           if (data1[j1] < thr) {
               yl_avg += ys[j1];
               //Wl[yl_count++] = j1;
@@ -122,7 +125,7 @@ void forestFindThr( int N, int F, const float *data,
     
     if(split == 3){
       for( j=0; j<N-1; j++ ) {
-        j1=order1[j]; j2=order1[j+1];// h=ys[j1]-1;
+        j1=order1[j];// j2=order1[j+1];// h=ys[j1]-1;
         
         vInit += (ys[j1]-ys_avg)*(ys[j1]-ys_avg);
         
@@ -135,8 +138,8 @@ void forestFindThr( int N, int F, const float *data,
         }
       }
       
-      error_l = error_l / ys_avg;
-      error_r = error_r / ys_avg;
+      error_l = error_l / (yl_count+yr_count);
+      error_r = error_r / (yl_count+yr_count);
       
       v=(error_l+error_r);
       if(error_best == -1)
@@ -173,7 +176,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
   ws = (float*) mxGetData(prhs[2]);
   order = (uint32*) mxGetData(prhs[3]);
   //H = (int) mxGetScalar(prhs[4]);
-  split = (int) mxGetScalar(prhs[5]);
+  split = (int) mxGetScalar(prhs[4]);
   N = (int) mxGetM(prhs[0]);
   F = (int) mxGetN(prhs[0]);
   forestFindThr(N,F,data,ys,ws,order,split,fid,thr,gain);
