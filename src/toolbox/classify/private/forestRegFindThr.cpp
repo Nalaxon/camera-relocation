@@ -43,7 +43,7 @@ void forestFindThr( int N, int F, const float *data,
   double best_thr=-2;
   
   // perform initialization
-  vBst = vInit =  -1; fid = 1; thr = 0;
+  vBst = -1; vInit = 0; fid = 1; thr = 0;
   //for( i=0; i<H; i++ ) W[i] = 0;
   //for( j=0; j<N; j++ ) { w+=ws[j]; W[ys[j]-1]+=ws[j]; }
   //if( split==0 ) { for( i=0; i<H; i++ ) g+=gini(W[i]); vBst=vInit=(1-g/w/w); }
