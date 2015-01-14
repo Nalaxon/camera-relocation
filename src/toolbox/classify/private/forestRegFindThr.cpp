@@ -34,8 +34,7 @@ void forestFindThr( int H, int N, int F, const float *data,
   Wl=new double[H]; Wr=new double[H]; W=new double[H];
   
   
-  int tries = 0;
-  int maxtries = 500;
+
   
   double error_l=0;
   double error_r=0;
@@ -50,15 +49,14 @@ void forestFindThr( int H, int N, int F, const float *data,
   if( split==1 ) { for( i=0; i<H; i++ ) g+=entropy(W[i]); vBst=vInit=g/w; }
   // loop over features, then thresholds (data is sorted by feature value)
   
-  while((tries < maxtries) && (vOld - vBst) < 1)
+  for(int k = 0; k < N-1; ++k)
   {
-    ++tries;
     //dice \delta (offest of pixel) Eq. (2), (3)
     //dice thr
   for( i=0; i<F; i++ ) {
     order1=(uint32*) order+i*N; data1=(float*) data+i*size_t(N);
     
-    thr = data1[(rand()%N)];
+    thr = 0.5f*(data1[k]+data1[k+1]);
     
     for( j=0; j<H; j++ ) { Wl[j]=0; Wr[j]=W[j]; } gl=wl=0; gr=g; wr=w;
     //loop over pixels
@@ -137,8 +135,8 @@ void forestFindThr( int H, int N, int F, const float *data,
         }
       }
       
-      error_l = error_l / yl_count;
-      error_r = error_r / yr_count;
+      error_l = error_l / ys_avg;
+      error_r = error_r / ys_avg;
       
       v=(error_l+error_r);
       if(error_best == -1)
