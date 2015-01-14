@@ -73,7 +73,7 @@ if(isempty(split)), error('unknown splitting criteria: %s',splitStr); end
 
 % make sure data has correct types
 if(~isa(data,'single')), data=single(data); end
-if(~isa(ys,'uint32')), ys=uint32(ys); end
+%if(~isa(ys,'uint32')), ys=uint32(ys); end
 if(~isa(fWts,'single')), fWts=single(fWts); end
 if(~isa(dWts,'single')), dWts=single(dWts); end
 

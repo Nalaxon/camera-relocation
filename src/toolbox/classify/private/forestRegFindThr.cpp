@@ -25,7 +25,7 @@ inline float flog2( float x ) {
 
 // perform actual computation
 void forestFindThr( int N, int F, const float *data,
-  const uint32 *ys, const float *ws, const uint32 *order, const int split,
+  const float *ys, const float *ws, const uint32 *order, const int split,
   uint32 &fid, float &thr, double &gain )
 {
   double *Wl, *Wr, *W; float *data1; uint32 *order1;
@@ -44,7 +44,7 @@ void forestFindThr( int N, int F, const float *data,
   // perform initialization
   vBst = vInit = vOld = 0; g = 0; w = 0; fid = 1; thr = 0;
   //for( i=0; i<H; i++ ) W[i] = 0;
-  for( j=0; j<N; j++ ) { w+=ws[j]; W[ys[j]-1]+=ws[j]; }
+  //for( j=0; j<N; j++ ) { w+=ws[j]; W[ys[j]-1]+=ws[j]; }
   //if( split==0 ) { for( i=0; i<H; i++ ) g+=gini(W[i]); vBst=vInit=(1-g/w/w); }
   //if( split==1 ) { for( i=0; i<H; i++ ) g+=entropy(W[i]); vBst=vInit=g/w; }
   // loop over features, then thresholds (data is sorted by feature value)
@@ -65,8 +65,8 @@ void forestFindThr( int N, int F, const float *data,
     ys_avg = yr_avg = yl_avg = 0;
     
     for( j=0; j<N-1; j++ ) {
-      j1=order1[j]; j2=order1[j+1]; h=ys[j1]-1;
-      if(split==0) {
+      j1=order1[j]; j2=order1[j+1];// h=ys[j1]-1;
+     /* if(split==0) {
         // gini = 1-\sum_h p_h^2; v = gini_l*pl + gini_r*pr
         wl+=ws[j1]; gl-=gini(Wl[h]); Wl[h]+=ws[j1]; gl+=gini(Wl[h]);
         wr-=ws[j1]; gr-=gini(Wr[h]); Wr[h]-=ws[j1]; gr+=gini(Wr[h]);
@@ -84,7 +84,7 @@ void forestFindThr( int N, int F, const float *data,
         wl+=ws[j1]; Wl[h]+=ws[j1]; wr-=ws[j1]; Wr[h]-=ws[j1];
         g=0; //for( int h1=0; h1<H; h1++ ) g+=fabs(Wl[h1]/wl-Wr[h1]/wr);
         v = - wl/w*wr/w*g*g;
-      } else if (split==3) { //entropy Eq. (4), (5)
+      } else */if (split==3) { //entropy Eq. (4), (5)
           //implement something
           
           ys_avg+= ys[j1];
@@ -103,10 +103,10 @@ void forestFindThr( int N, int F, const float *data,
             //2. max. depth reached
       }
       
-      if (split != 3) {
+    /*  if (split != 3) {
           if( v<vBst && data1[j2]-data1[j1]>=1e-6f ) {
               vBst=v; fid=i+1; thr=0.5f*(data1[j1]+data1[j2]); }
-      }
+      }*/
     }
     
     
@@ -122,7 +122,7 @@ void forestFindThr( int N, int F, const float *data,
     
     if(split == 3){
       for( j=0; j<N-1; j++ ) {
-        j1=order1[j]; j2=order1[j+1]; h=ys[j1]-1;
+        j1=order1[j]; j2=order1[j+1];// h=ys[j1]-1;
         
         vInit += (ys[j1]-ys_avg)*(ys[j1]-ys_avg);
         
@@ -161,15 +161,15 @@ void forestFindThr( int N, int F, const float *data,
   }
 
   thr = best_thr;
-  delete [] Wl; delete [] Wr; delete [] W; gain = vInit-vBst;
+  /*delete [] Wl; delete [] Wr; delete [] W;*/ gain = vInit-vBst;
 }
 
 // [fid,thr,gain] = mexFunction(data,ys,ws,order,H,split);
 void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
-  int  N, F, split; float *data, *ws, thr;
-  double gain; uint32 *ys, *order, fid;
+  int  N, F, split; float *ys,*data, *ws, thr;
+  double gain; uint32 *order, fid;
   data = (float*) mxGetData(prhs[0]);
-  ys = (uint32*) mxGetData(prhs[1]);
+  ys = (float*) mxGetData(prhs[1]);
   ws = (float*) mxGetData(prhs[2]);
   order = (uint32*) mxGetData(prhs[3]);
   //H = (int) mxGetScalar(prhs[4]);
