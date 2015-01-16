@@ -53,11 +53,3 @@ ys = mu;
 %[~,ys] = max(foo', [], 2);
 pd = [mu variance];
 end
-
-function [ids] = findRegInds(m, v, data)
-%find index of classes via max of distributions
-%m ... mean
-%v ... variance
-%data. data
-
-end

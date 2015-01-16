@@ -25,7 +25,7 @@ typedef unsigned int uint32;
 }*/
 
 // perform actual computation
-void forestFindThr( int N, int F, const float *data,
+void forestFindThr( int N, int F, const double *data,
   const double *ys, const float *ws, const uint32 *order, const int split,
   uint32 &fid, float &thr, double &gain )
 {
@@ -60,6 +60,7 @@ void forestFindThr( int N, int F, const float *data,
     
     
     thr = 0.5*(data1[ order1[k] ] + data1[ order1[k+1] ]);
+    //mexPrintf("thr: %f, d1: %d, d2: %d", thr, data1[ order1[k] ], data1[ order1[k+1] ]);
     
     //for( j=0; j<H; j++ ) { Wl[j]=0; Wr[j]=W[j]; } gl=wl=0; gr=g; wr=w;
     //loop over pixels
@@ -210,10 +211,10 @@ void forestFindThr( int N, int F, const float *data,
 // [fid,thr,gain] = mexFunction(data,ys,ws,order,H,split);
 void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
   int  N, F, split; 
-  float *data, *ws, thr;
-  double gain, *ys; 
+  float *ws, thr;
+  double gain, *data, *ys; 
   uint32 *order, fid;
-  data = (float*) mxGetData(prhs[0]);
+  data = (double*) mxGetData(prhs[0]);
   ys = (double*) mxGetData(prhs[1]);
   ws = (float*) mxGetData(prhs[2]);
   order = (uint32*) mxGetData(prhs[3]);
