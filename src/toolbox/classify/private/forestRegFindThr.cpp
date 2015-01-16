@@ -32,7 +32,7 @@ void forestFindThr( int N, int F, const float *data,
   //double *Wl, *Wr, *W; 
   float *data1; uint32 *order1;
   int i, j, j1, j2; double vBst, vInit, v;
-  int yl_count = 0, yr_count = 0; double yl, yr, yl_avg, yr_avg, ys_avg;
+  int yl_count = 0, yr_count = 0; double yl, yr, yl_avg[3], yr_avg[3], ys_avg[3];
   //Wl=new double[H]; Wr=new double[H]; W=new double[H];
   
   
@@ -64,7 +64,9 @@ void forestFindThr( int N, int F, const float *data,
     //loop over pixels
     
     yl_count = yr_count = 0;
-    ys_avg = yr_avg = yl_avg = 0;
+    ys_avg[0] = yr_avg[0] = yl_avg[0] = 0;
+    ys_avg[1] = yr_avg[1] = yl_avg[1] = 0;
+    ys_avg[2] = yr_avg[2] = yl_avg[2] = 0;
     
     for( j=0; j<N-1; j++ ) {
       j1=order1[j]; j2=order1[j+1];// h=ys[j1]-1;
@@ -89,13 +91,20 @@ void forestFindThr( int N, int F, const float *data,
       } else */if (split==3) { //entropy Eq. (4), (5)
           //implement something
           
-          ys_avg += ys[j1];
+          ys_avg[0] += ys[j1];
+          ys_avg[1] += ys[j1+N];
+          ys_avg[2] += ys[j1+2*N];
+          
           if (data1[j1] < thr) {
-              yl_avg += ys[j1];
+              yl_avg[0] += ys[j1];
+              yl_avg[1] += ys[j1+N];
+              yl_avg[2] += ys[j1+2*N];
               //Wl[yl_count++] = j1;
               ++yl_count;
           } else {
-              yr_avg += ys[j1];
+              yr_avg[0] += ys[j1];
+              yr_avg[1] += ys[j1+N];
+              yr_avg[2] += ys[j1+2*N];
               //Wr[yr_count++] = j1;
               ++yr_count;
           }
@@ -113,14 +122,25 @@ void forestFindThr( int N, int F, const float *data,
     
     
     //make it a mean
-    yl_avg = yl_avg / yl_count;
-    yr_avg = yr_avg / yr_count;
-    ys_avg = ys_avg / (yl_count+yr_count);
+    yl_avg[0] = yl_avg[0] / yl_count;
+    yl_avg[1] = yl_avg[1] / yl_count;
+    yl_avg[2] = yl_avg[2] / yl_count;
+    
+    yr_avg[0] = yr_avg[0] / yr_count;
+    yr_avg[1] = yr_avg[1] / yr_count;
+    yr_avg[2] = yr_avg[2] / yr_count;
+    
+    ys_avg[0] = ys_avg[0] / (yl_count+yr_count);
+    ys_avg[1] = ys_avg[1] / (yl_count+yr_count);
+    ys_avg[2] = ys_avg[2] / (yl_count+yr_count);
+    
+    
     
     
     
     error_l=0;
     error_r=0;
+    double a, b, c;
     
     if(split == 3){
       for( j=0; j<N-1; j++ ) {
@@ -128,15 +148,31 @@ void forestFindThr( int N, int F, const float *data,
         
         if(vBst == -1)
         {
-          vInit += (ys[j1]-ys_avg)*(ys[j1]-ys_avg);
+          
+          a = ys[j1]-ys_avg[0];
+          b = ys[j1+N]-ys_avg[1];
+          c = ys[j1+2*N]-ys_avg[2];
+          
+          vInit += a*a+b*b+c*c;
         }
         
         if(data1[j1]<thr)
         {
-          error_l += (ys[j1]-yl_avg)*(ys[j1]-yl_avg);
+          
+          a = ys[j1]-yl_avg[0];
+          b = ys[j1+N]-yl_avg[1];
+          c = ys[j1+2*N]-yl_avg[2];
+          
+          error_l += a*a + b*b + c*c;
         }else
         {
-          error_r += (ys[j1]-yr_avg)*(ys[j1]-yr_avg);
+          
+          a = ys[j1]-yr_avg[0];
+          b = ys[j1+N]-yr_avg[1];
+          c = ys[j1+2*N]-yr_avg[2];
+          
+          
+          error_r += a*a + b*b + c*c;
         }
       }
       

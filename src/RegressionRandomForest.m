@@ -6,10 +6,10 @@
 %[1] http://vision.ucsd.edu/~pdollar/toolbox/doc/index.html
 
 %do not forget load toolbox ;-)
-clear all;
+%clear all;
 clc; close all;
 
-%toolboxRegCompile;
+toolboxRegCompile;
 
 
 %define forst configuration
@@ -39,15 +39,6 @@ depth = imresize(depth, 2);
 pose = load('../data/heads/seq-01/frame-000000.pose.txt');
 [a b] = size(depth);
 
-hs(1,:)=repmat([1:640],1,480);
-for i=1:480
-   hs(2,480*(i-1)+1:480*(i)) = i;
-end
-hs(3,:)=depth(1:640*480);
-hs(4,:)=ones(1,640*480);
-
-m = pose*hs;
-hs0 = m;
 
 D=@(p) int32(depth(p));
 I=@(p) int32(color(p));
@@ -57,7 +48,27 @@ f_combined=@(d1,d2,c1,c2) f_dargb(d1,d2,c1,c2) + f_depth(d1,d2);
 
 xs0 = repmat([{f_depth},{f_dargb},{f_combined}],a*b,1);
 
-hs0 = reshape(depth, [a*b 1]);
+%for i=1:640
+%    hs(1,640*(i-1)+1:640*i) = i;
+%end
+%hs(2,:) = repmat([1:480],1,640);
+
+hs(1,:)=repmat([1:640],1,480);
+for i=1:480
+   hs(2,480*(i-1)+1:480*(i)) = i;
+end
+hs(3,:)=depth(1:640*480);
+hs(4,:)=ones(1,640*480);
+
+m = pose*hs;
+m(1,:) = (m(1,:)./m(4,:));
+m(2,:) = (m(2,:)./m(4,:));
+m(3,:) = (m(3,:)./m(4,:));
+m(4,:) = (m(4,:)./m(4,:));
+
+hs0 = m(1:3,:)';
+
+%hs0 = reshape(depth, [a*b 1]);
 
 %% compute
 %train forest
