@@ -41,9 +41,9 @@ hs0 = reshape(depth, [a*b 1]);
 
 
 D=@(p) int32(depth(p));
-I=@(p,c) int32(color(p*c));
+I=@(p) int32(color(p));
 f_depth=@(d1,d2) D(d1:a*b-(abs(d2-d1)))-D(d2:a*b); 
-f_dargb=@(d1,d2,c1,c2) I(d1:a*b-abs(d2-d1),c1) - I(d2:a*b,c2)
+f_dargb=@(d1,d2,c1,c2) I(a*b*c1+d1:a*b*(c1+1)-abs(d2-d1)) - I(a*b*c2+d2:a*b*(c2+1))
 f_combined=@(d1,d2,c1,c2) f_dargb(d1,d2,c1,c2) + f_depth(d1,d2)
 
 
