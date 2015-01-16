@@ -30,13 +30,22 @@ clc; close all;
 % xs0=single(xs0);
 % xs1=single(xs1);
 
+
 %% prepare data from files
-color = imread('..\data\heads\seq-01\frame-000000.color.png');
-depth = imread('..\data\heads\seq-01\frame-000000.depth.png');
-pose = load('..\data\heads\seq-01\frame-000000.pose.txt');
+color = imread('../data/heads/seq-01/frame-000000.color.png');
+depth = imread('../data/heads/seq-01/frame-000000.depth.png');
+pose = load('../data/heads/seq-01/frame-000000.pose.txt');
 [a b] = size(depth);
 xs0 = single(cat(3, color, depth));
 hs0 = reshape(depth, [a*b 1]);
+
+
+D=@(p) int32(depth(p));
+I=@(p,c) int32(color(p*c));
+f_depth=@(d1,d2) D(d1:a*b-(abs(d2-d1)))-D(d2:a*b); 
+f_dargb=@(d1,d2,c1,c2) I(d1:a*b-abs(d2-d1),c1) - I(d2:a*b,c2)
+f_combined=@(d1,d2,c1,c2) f_dargb(d1,d2,c1,c2) + f_depth(d1,d2)
+
 
 %% compute
 %train forest
