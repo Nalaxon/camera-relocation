@@ -33,19 +33,21 @@ clc; close all;
 
 %% prepare data from files
 color = imread('../data/heads/seq-01/frame-000000.color.png');
+color = imresize(color, 2);
 depth = imread('../data/heads/seq-01/frame-000000.depth.png');
+depth = imresize(depth, 2);
 pose = load('../data/heads/seq-01/frame-000000.pose.txt');
 [a b] = size(depth);
-xs0 = single(cat(3, color, depth));
-hs0 = reshape(depth, [a*b 1]);
-
 
 D=@(p) int32(depth(p));
 I=@(p) int32(color(p));
-f_depth=@(d1,d2) D(d1:a*b-(abs(d2-d1)))-D(d2:a*b); 
-f_dargb=@(d1,d2,c1,c2) I(a*b*c1+d1:a*b*(c1+1)-abs(d2-d1)) - I(a*b*c2+d2:a*b*(c2+1))
-f_combined=@(d1,d2,c1,c2) f_dargb(d1,d2,c1,c2) + f_depth(d1,d2)
+f_depth=@(d1,d2, c1, c2) D(d1:a*b+d2)-D(d2:a*b+d1); 
+f_dargb=@(d1,d2,c1,c2) I(a*b*c1+d1:a*b*(c1+1)+d1) - I(a*b*c2+d2:a*b*(c2+1)+d2);
+f_combined=@(d1,d2,c1,c2) f_dargb(d1,d2,c1,c2) + f_depth(d1,d2);
 
+xs0 = {f_depth f_dargb f_combined};
+
+hs0 = reshape(depth, [a*b 1]);
 
 %% compute
 %train forest
