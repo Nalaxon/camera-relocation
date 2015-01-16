@@ -61,7 +61,7 @@ dfs={ 'M',1, 'H',[], 'N1',[], 'F1',[], 'split','gini', 'minCount',1, ...
   'minChild',1, 'maxDepth',64, 'dWts',[], 'fWts',[] };
 [M,H,N1,F1,splitStr,minCount,minChild,maxDepth,dWts,fWts] = ...
   getPrmDflt(varargin,dfs,1);
-[N,F]=size(data); assert(length(ys)==N);
+[N,F,Z]=size(data); if Z==1, assert(length(ys)==N); else assert(length(ys)==N*F); end
 minChild=max(1,minChild); minCount=max([1 minCount minChild]);
 %if(isempty(H)), H=max(ys); end; assert(all(ys<=H)); %TODO: tidy up H
 if(isempty(N1)), N1=round(5*N/M); end; N1=min(N,N1);
@@ -94,6 +94,13 @@ function tree = treeTrain( data, ys, dWts, prmTree )
 % Train single random tree.
 [H,F1,minCount,minChild,maxDepth,fWts,split,]=deal(prmTree{:});
 N=size(data,1); %data size
+[N N2 N3] = size(data);
+image_length = N*N2;
+depth_low = image_length*3 +1;
+depth_high = image_length*4;
+D = data(:,:,4);
+D = reshape(D, [1,image_length]);
+D(D==0) = 6; %"Pixels with undefined depth and those outside the image boundary are assigned D = 6m"
 K=2*N-1; %maximal number of nodes. E.g.: 2 nodes = 3
 
 thrs=zeros(K,1,'single'); distr=zeros(K,H,'single');
@@ -109,7 +116,43 @@ while( k < K )
   % if pure node or insufficient data don't train split
   if( n1<=minCount || depth(k)>maxDepth ), k=k+1; continue; end
   % train split and continue
-  fids1=wswor(fWts,F1,4); data1=data(dids1,fids1);
+  if(N3 > 1)
+      delta = randi(image_length,1,2);
+      z = randi(3,1);
+      c = randi(3,1,2);
+      color_low = c .*image_length +1;
+      color_high = (c+1) .*image_length;
+      dataf = zeros(1, image_length);
+      
+      
+      if (z == 1 || z ~= 2)  %depth
+          idx1 = depth_low : depth_high;
+          idx2 = idx1;
+          idx1 = idx1 + round(delta(1)*ones(1,image_length) ./ D);  %maybe a problem here? no clue
+          idx1(depth_low>idx1) = depth_low;
+          idx1(depth_high<idx1) = depth_high;
+          idx2 = idx2 + round(delta(2)*ones(1,image_length) ./ D);
+          idx2(depth_low>idx2) = depth_low;
+          idx2(depth_high<idx2) = depth_high;
+          dataf = data(idx1) - data(idx2);
+      end
+      
+      if (z == 2 || z~=1) %da-rgb
+          idx1 = color_low(1) : color_high(1);
+          idx2 = color_low(2) : color_high(2);
+          idx1 = idx1 + round(delta(1)*ones(1,image_length) ./ D);  %maybe a problem here? no clo
+          idx1(color_low(1)>idx1) = color_low(1);
+          idx1(color_high(1)<idx1) = color_high(1);
+          idx2 = idx2 + round(delta(2)*ones(1,image_length) ./ D);
+          idx2(color_low(2)>idx2) = color_low(2);
+          idx2(color_high(2)<idx2) = color_high(2);
+          dataf = dataf + data(idx1) - data(idx2);
+      end
+  else
+      dataf = data;
+  end
+  %fids1=wswor(fWts,F1,4); 
+  data1 = dataf(1,dids1); %data1=data(dids1,fids1);
   [~,order1]=sort(data1); order1=uint32(order1-1);
   [fid,thr,gain]=forestRegFindThr(data1,ys1,dWts(dids1),order1,split); %TODO: find splits, idee: mehrere zuf??llige werte, berechne objective function (entropie) f??r jeden, behalte den besten
   
