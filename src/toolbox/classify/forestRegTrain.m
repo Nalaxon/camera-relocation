@@ -103,6 +103,7 @@ thrs=zeros(K,1,'single'); distr=zeros(K,H,'single');
 %if(split ~= 3), distr=zeros(K,H,'single'); else distr = zeros(K, 2, 'single'); end
 fids=zeros(K,1,'uint32'); child=fids; count=fids; depth=fids;
 means=zeros(K,size(ys,2), 'double'); variances=zeros(K,size(ys,2), 'double');
+d1=zeros(K, 1); d2=zeros(K,1); c1=zeros(K,1); c2=zeros(K,1);
 ysn=cell(K,1); dids=cell(K,1); dids{1}=uint32(1:N);
 k=1; K=2; %k.. current node; K.. current number of nodes
 while( k < K )
@@ -128,6 +129,7 @@ while( k < K )
     dids{K}=dids1(left); dids{K+1}=dids1(~left);
     means(K,:)=mean(ys1(left,:)); means(K+1,:)=mean(ys1(~left,:));         %TODO: berechne gaussian der ??brig gebliebenen regression targets ys (m im paper)?
     variances(K,:)=var(double(ys1(left,:))); variances(K+1,:)=var(double(ys1(~left,:)));
+    d1(K)=delta(1); d2(K)=delta(2); c1=channel(1); c2=channel(2);
     depth(K:K+1)=depth(k)+1; K=K+2;
 
   end; k=k+1;
@@ -136,7 +138,8 @@ end
 K=1:K-1; ysn=[ysn{K}]';
 tree=struct('fids',fids(K),'thrs',thrs(K),'child',child(K),...
   'distr',distr(K,:),'ys',ysn,'count',count(K),'depth',depth(K),...
-  'mean', means(K,:), 'var', variances(K,:));
+  'mean', means(K,:), 'var', variances(K,:),...
+  'd1', d1', 'd2', d2', 'c1', c1, 'c2', c2);
 %test if symoblic link is working as we expected
 end
 
