@@ -45,7 +45,7 @@ f_depth=@(d1,d2, c1, c2) D(d1:a*b+d2)-D(d2:a*b+d1);
 f_dargb=@(d1,d2,c1,c2) I(a*b*c1+d1:a*b*(c1+1)+d1) - I(a*b*c2+d2:a*b*(c2+1)+d2);
 f_combined=@(d1,d2,c1,c2) f_dargb(d1,d2,c1,c2) + f_depth(d1,d2);
 
-xs0 = {f_depth f_dargb f_combined};
+xs0 = repmat([{f_depth},{f_dargb},{f_combined}],a*b,1);
 
 hs0 = reshape(depth, [a*b 1]);
 
