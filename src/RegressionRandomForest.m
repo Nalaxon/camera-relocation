@@ -6,7 +6,7 @@
 %[1] http://vision.ucsd.edu/~pdollar/toolbox/doc/index.html
 
 %do not forget load toolbox ;-)
-%clear all;
+clear all;
 clc; close all;
 
 toolboxRegCompile;
@@ -46,7 +46,7 @@ f_depth=@(d1,d2, c1, c2) D(d1:640*480+d1)-D(d2:640*480+d2);
 f_dargb=@(d1,d2,c1,c2) I(640*480*c1+d1:a*b*(c1+1)+d1) - I(640*480*c2+d2:a*b*(c2+1)+d2);
 f_combined=@(d1,d2,c1,c2) f_dargb(d1,d2,c1,c2) + f_depth(d1,d2);
 
-xs0 = repmat([{f_depth},{f_dargb},{f_combined}],a*b,1);
+xs0 = repmat([{f_depth},{f_dargb},{f_combined}],640*480,1);
 
 %for i=1:640
 %    hs(1,640*(i-1)+1:640*i) = i;
