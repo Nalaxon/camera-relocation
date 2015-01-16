@@ -6,7 +6,7 @@
 %[1] http://vision.ucsd.edu/~pdollar/toolbox/doc/index.html
 
 %do not forget load toolbox ;-)
-clear all;
+%clear all;
 clc; close all;
 
 toolboxRegCompile;
@@ -34,13 +34,13 @@ toolboxRegCompile;
 %% prepare data from files
 color = imread('../data/heads/seq-01/frame-000000.color.png');
 color = imresize(color, 2);
-depth = imread('../data/heads/seq-01/frame-000000.depth.png');
-depth = imresize(depth, 2);
+depthmap = imread('../data/heads/seq-01/frame-000000.depth.png');
+depthmap = imresize(depth, 2);
 pose = load('../data/heads/seq-01/frame-000000.pose.txt');
-[a b] = size(depth);
+[a b] = size(depthmap);
 
 
-D=@(p) int32(depth(p));
+D=@(p) int32(depthmap(p));
 I=@(p) int32(color(p));
 f_depth=@(d1,d2, c1, c2) D(d1:640*480+d1)-D(d2:640*480+d2); 
 f_dargb=@(d1,d2,c1,c2) I(640*480*c1+d1:a*b*(c1+1)+d1) - I(640*480*c2+d2:a*b*(c2+1)+d2);
@@ -57,7 +57,7 @@ hs(1,:)=repmat([1:640],1,480);
 for i=1:480
    hs(2,480*(i-1)+1:480*(i)) = i;
 end
-hs(3,:)=depth(1:640*480);
+hs(3,:)=depthmap(1:640*480);
 hs(4,:)=ones(1,640*480);
 
 m = pose*hs;
