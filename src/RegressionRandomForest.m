@@ -70,13 +70,15 @@ hs0 = m(1:3,:)';
 
 %hs0 = reshape(depth, [a*b 1]);
 
-%% compute
+%% train
 %train forest
 pTrain={'maxDepth', 50, 'N1', a, 'F1', 1, 'M', 150, 'minChild', 1, 'split', 'custom'};
 
 %train forst
 forest=forestRegTrain(xs0, hs0, pTrain{:});
 
+
+%% apply
 %apply forst on first dataset
 [hsPr0 ps0 pd0] = forestRegApply(xs0, forest);
 
