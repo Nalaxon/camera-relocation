@@ -85,6 +85,9 @@ for i=1:M
     dWts1=dWts(d); dWts1=dWts1/sum(dWts1);
   end
   tree = treeTrain(data1,ys1,dWts1,prmTree);
+  if(mod(i,10)==0)
+      i
+  end
   if(i==1), forest=tree(ones(M,1)); else forest(i)=tree; end
 end
 
@@ -93,7 +96,7 @@ end
 function tree = treeTrain( data, ys, dWts, prmTree )
 % Train single random tree.
 [H,F1,minCount,minChild,maxDepth,fWts,split,]=deal(prmTree{:});
-N=size(ys); %data size
+N=size(ys,1); %data size
 K=2*N-1; %maximal number of nodes. E.g.: 2 nodes = 3
 
 thrs=zeros(K,1,'single'); distr=zeros(K,H,'single');
@@ -110,15 +113,16 @@ while( k < K )
   if( n1<=minCount || depth(k)>maxDepth ), k=k+1; continue; end
   % train split and continue
   
-  delta = randi(image_length,1,2);
+  delta = randi(N,1,2);
   channel = randi(3,1,2)-1;  %channel: 0 - 2!!!
   
   fids1=wswor(fWts,F1,4);
   data1 = data{fids1}(delta(1), delta(2), channel(1), channel(2)); %data1=data(dids1,fids1);
-  [~,order1]=sort(data1); order1=uint32(order1-1);
-  [fid,thr,gain]=forestRegFindThr(data1,ys1,dWts(dids1),order1,split); %TODO: find splits, idee: mehrere zuf??llige werte, berechne objective function (entropie) f??r jeden, behalte den besten
-    
-  fid=fids1(fid); left=data(dids1,fid)<thr; count0=nnz(left);
+  data2 = data1(dids1);
+  [~,order1]=sort(data2); order1=uint32(order1-1);
+  [fid,thr,gain]=forestRegFindThr(data2,ys1,dWts(dids1),order1,split); %TODO: find splits, idee: mehrere zuf??llige werte, berechne objective function (entropie) f??r jeden, behalte den besten
+  size(data2);
+  fid=fids1(fid); left=data1(dids1)<thr; count0=nnz(left);
   if( gain>1e-10 && count0>=minChild && (n1-count0)>=minChild )
     child(k)=K; fids(k)=fid-1; thrs(k)=thr;
     dids{K}=dids1(left); dids{K+1}=dids1(~left);

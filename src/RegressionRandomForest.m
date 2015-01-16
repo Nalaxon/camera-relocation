@@ -39,10 +39,20 @@ depth = imresize(depth, 2);
 pose = load('../data/heads/seq-01/frame-000000.pose.txt');
 [a b] = size(depth);
 
+hs(1,:)=repmat([1:640],1,480);
+for i=1:480
+   hs(2,480*(i-1)+1:480*(i)) = i;
+end
+hs(3,:)=depth(1:640*480);
+hs(4,:)=ones(1,640*480);
+
+m = pose*hs;
+hs0 = m;
+
 D=@(p) int32(depth(p));
 I=@(p) int32(color(p));
-f_depth=@(d1,d2, c1, c2) D(d1:a*b+d2)-D(d2:a*b+d1); 
-f_dargb=@(d1,d2,c1,c2) I(a*b*c1+d1:a*b*(c1+1)+d1) - I(a*b*c2+d2:a*b*(c2+1)+d2);
+f_depth=@(d1,d2, c1, c2) D(d1:640*480+d1)-D(d2:640*480+d2); 
+f_dargb=@(d1,d2,c1,c2) I(640*480*c1+d1:a*b*(c1+1)+d1) - I(640*480*c2+d2:a*b*(c2+1)+d2);
 f_combined=@(d1,d2,c1,c2) f_dargb(d1,d2,c1,c2) + f_depth(d1,d2);
 
 xs0 = repmat([{f_depth},{f_dargb},{f_combined}],a*b,1);
@@ -51,7 +61,7 @@ hs0 = reshape(depth, [a*b 1]);
 
 %% compute
 %train forest
-pTrain={'maxDepth', 50, 'N1', a, 'M', 1500, 'minChild', 1, 'split', 'custom'};
+pTrain={'maxDepth', 50, 'N1', a, 'F1', 1, 'M', 150, 'minChild', 1, 'split', 'custom'};
 
 %train forst
 forest=forestRegTrain(xs0, hs0, pTrain{:});
