@@ -31,8 +31,10 @@ void forestFindThr( int N, int F, const double *data,
 {
 
   //double *Wl, *Wr, *W; 
-  float *data1; uint32 *order1;
-  int i, j, j1, j2; double vBst, vInit, v;
+  double *data1; 
+  uint32 *order1;
+  int i, j, j1, j2; 
+  double vBst, vInit, v;
   int yl_count = 0, yr_count = 0; double yl_avg[3], yr_avg[3], ys_avg[3];
   //Wl=new double[H]; Wr=new double[H]; W=new double[H];
   
@@ -56,11 +58,11 @@ void forestFindThr( int N, int F, const double *data,
     //dice \delta (offest of pixel) Eq. (2), (3)
     //dice thr
   for( i=0; i<F; i++ ) {
-    order1=(uint32*) order+i*N; data1=(float*) data+i*size_t(N);
+    order1=(uint32*) order+i*N; data1=(double*) data+i*sizeof(double);
     
     
     thr = 0.5*(data1[ order1[k] ] + data1[ order1[k+1] ]);
-    //mexPrintf("thr: %f, d1: %d, d2: %d", thr, data1[ order1[k] ], data1[ order1[k+1] ]);
+    //mexPrintf("thr: %f, d1: %f, d2: %f", thr, data1[ order1[k] ], data1[ order1[k+1] ]);
     
     //for( j=0; j<H; j++ ) { Wl[j]=0; Wr[j]=W[j]; } gl=wl=0; gr=g; wr=w;
     //loop over pixels

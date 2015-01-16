@@ -84,8 +84,10 @@ for i=1:M
     d=wswor(dWts,N1,4); data1=data(d,:); ys1=ys(d,:);
     dWts1=dWts(d); dWts1=dWts1/sum(dWts1);
   end
+  tic;
   tree = treeTrain(data1,ys1,dWts1,prmTree);
-  if(mod(i,10)==0)
+  toc;
+  if(mod(i,5)==0)
       i
   end
   if(i==1), forest=tree(ones(M,1)); else forest(i)=tree; end
