@@ -1,22 +1,30 @@
 function [ids] = forestRegInds(data, tree)
 %UNTITLED2 finds the Indices of the forest
 N = size(data, 1);
-child = tree.child;
+
 ids=zeros(N,1);
-for i = 1:N
-    k=1;
-    while(child(k))
-        fid = tree.fids(k);
-        thr = tree.thrs(k);
-        data1 = data{tree.fids(k)}(tree.d1(k), tree.d2(k), tree.c1(k), tree.c2(k));
-        if(data1(i+fid*N) < thr)
-            k=child(k)-1;
-        else
-            k=child(k);
-        end
-        ids(i)=k+1;
-    end
+
+ids(:) = treeInds(data, ones(N,1), 1, tree, 1);
+
+
 end
+
+function [ids]=treeInds(data, dids, k, tree, depth)
+if(tree.child(k)==0)
+    ids(dids)=k;
+    return;
+end
+
+depth
+fid = tree.fids(k)+1;
+data1 = data{fid}(tree.d1(k), tree.d2(k), tree.c1(k), tree.c2(k));
+
+left = data1(dids) < tree.thrs(k);
+
+ids(left) = treeInds(data, left, tree.child(k), tree, depth+1);
+
+ids(~left) =treeInds(data, ~left, tree.child(k)+1, tree, depth+1);
+
 
 end
 
