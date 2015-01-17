@@ -36,11 +36,17 @@ if(best), ys=zeros(N,M); else ps=zeros(N,H); end
 for i=1:M, tree=forest(i);
   if(maxDepth>0), tree.child(tree.depth>=maxDepth) = 0; end
   if(minCount>0), tree.child(tree.count<=minCount) = 0; end
-    
+
+  tic;
   ids = forestRegInds(data,tree);
+  toc;
+  if(mod(i,5)==0)
+      i
+  end
+  
   if(best), ys(:,i)=tree.ys(ids); else ps=ps+tree.distr(ids,:); end
-  mu = mu + tree.mean(ids);
-  variance = variance + tree.var(ids);
+  mu = mu + tree.mean(ids,:);
+  variance = variance + tree.var(ids,:);
   %mu(:,i) = round(tree.mean(ids));
   %variance(:,i) = tree.var(ids);
 end
@@ -52,4 +58,5 @@ ys = mu;
 %[foo, bar] = histc(mu',1:H);
 %[~,ys] = max(foo', [], 2);
 pd = [mu variance];
+
 end
