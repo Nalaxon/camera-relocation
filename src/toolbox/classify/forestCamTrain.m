@@ -124,7 +124,7 @@ while( k < K )
   data2 = single(data1(dids1));
   [~,order1]=sort(data2); order1=uint32(order1-1);
   %tic;
-  [fid,thr,gain]=forestRegFindThr(data2,ys1,dWts(dids1),order1,split); %TODO: find splits, idee: mehrere zuf??llige werte, berechne objective function (entropie) f??r jeden, behalte den besten
+  [fid,thr,gain]=forestCamFindThr(data2,ys1,dWts(dids1),order1,split); %TODO: find splits, idee: mehrere zuf??llige werte, berechne objective function (entropie) f??r jeden, behalte den besten
   %toc;
   size(data2);
   fid=fids1(fid); left=data1(dids1)<thr; count0=nnz(left);
