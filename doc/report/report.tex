@@ -71,7 +71,7 @@
 \usepackage{techrep_icg}
 \usepackage{array}
 \usepackage{booktabs}
-
+\usepackage{lscape}
 
 
 % package 'graphicx' is automatically included depending on the
@@ -196,7 +196,7 @@ After that the implementation should be used for camera relocalization. Again th
 
 \subsubsection{Regression Random Forest}
 \label{rrf_intro}
-The weak learner \ref{eqn:weaklearner} or split function splits the data into a left and right dataset, by thresholding.
+The weak learner (\ref{eqn:weaklearner}) or split function splits the data into a left and right dataset, by thresholding.
 
 \begin{eqnarray}\label{eqn:weaklearner}
   h(\mathbf{p};\mathbf{\theta}_n) = [ f_{\phi_n}(\mathbf{p}) \geq \tau_n ]
@@ -217,11 +217,10 @@ Because several trees are included in a forest the output of all trees have to b
 
 \subsection{Implementation} % (fold)
 \label{sub:implementation}
-To achieve the defined goal, the Piotr Dollar toolbox \cite{piotr} has to be adopted. To be more precise the Objective function as given in \ref{eqn:objectiv_function} was added. Also variance and mean were added as component of the forest structure, while the mean value can be interpreted as the regression result of each tree.
+To achieve the defined goal, the Piotr Dollar toolbox \cite{piotr} has to be adopted. To be more precise the Objective function as given in equation (\ref{eqn:objectiv_function}) was added. Also variance and mean were added as component of the forest structure, while the mean value can be interpreted as the regression result of each tree.
 
 \subsubsection*{Regression Forest} % (fold)
 \label{ssub:regression_forest}
-
 
 % subsubsection regression_forest (end)
 
@@ -229,48 +228,73 @@ To achieve the defined goal, the Piotr Dollar toolbox \cite{piotr} has to be ado
 \label{ssub:camera_relocalization}
 First the implementation of a general Random Regression Forest was evaluated. To keep things simple, simple 2D functions were used to calculate an error as well as a visualization.
 Some attributes were kept constant:
-maxDepth = 50
-minChild = 1
+\begin{itemize}
+	\item maxDepth = 50
+  \item minChild = 1
+\end{itemize}
 
-While other were changed and performed differently as shown in table %\ref{tab:res_gen}
+For the general regression task, the number of input and the amount of trees per forest were varied. The implementation was tested with a one dimensional dataset: $cos(x*pi*4 + (x+1))^2$ which is shown in table ~\ref{tab:res_gen_cos}, and with a two dimensional dataset: $2*x + 3*y$ which is shown in table ~\ref{tab:res_gen_plane}
 
+\begin{landscape}
 
-
+\begin{table}[p]
 \begin{tabular}{|c|c|c|c|}
 \toprule
-Datapoints & \multicolumn{3}{c}{trees} \\ \hline
+Datapoints & \multicolumn{3}{|c|}{trees} \\ \hline
 \midrule
 & 50 & 150 & 1500 \\ \hline
-1000 & \includegraphics[width=0.25\textwidth]{fig/cos_1k_50} & \includegraphics[width=0.25\textwidth]{fig/cos_1k_150} & \includegraphics[width=0.25\textwidth]{fig/cos_1k_1500} \\ \hline
-10000& \includegraphics[width=0.25\textwidth]{fig/cos_10k_50} & \includegraphics[width=0.25\textwidth]{fig/cos_10k_150} & \includegraphics[width=0.25\textwidth]{fig/cos_10k_1500} \\ \hline
+1000 & \includegraphics[width=0.5\textwidth, height=0.35\textheight]{fig/cos_1k_50} & \includegraphics[width=0.5\textwidth, height=0.35\textheight]{fig/cos_1k_150} & \includegraphics[width=0.5\textwidth, height=0.35\textheight]{fig/cos_1k_1500} \\ \hline
+10000& \includegraphics[width=0.5\textwidth, height=0.35\textheight]{fig/cos_10k_50} & \includegraphics[width=0.5\textwidth, height=0.35\textheight]{fig/cos_10k_150} & \includegraphics[width=0.5\textwidth, height=0.35\textheight]{fig/cos_10k_1500} \\ \hline
 \bottomrule
 \end{tabular}
+\caption{The Table shows the results of varying the size of trees and size of input data. The images shows in red result of the forest, blue the labeled data. The used function was $cos(x*pi*4 + (x+1))^2$.}
+\label{tab:res_gen_cos}
+\end{table}
 
+\begin{table}[p]
 \begin{tabular}{|c|c|c|c|}
 \toprule
-Datapoints & \multicolumn{3}{c}{trees} \\ \hline
+Datapoints & \multicolumn{3}{|c|}{trees} \\ \hline
 \midrule
 & 50 & 150 & 1500 \\ \hline
-1000 & \includegraphics[width=0.25\textwidth]{fig/plane_1k_50} & \includegraphics[width=0.25\textwidth]{fig/plane_1k_150} & \includegraphics[width=0.25\textwidth]{fig/plane_1k_1500} \\ \hline
-10000& \includegraphics[width=0.25\textwidth]{fig/plane_10k_50} & \includegraphics[width=0.25\textwidth]{fig/plane_10k_150} & \includegraphics[width=0.25\textwidth]{fig/plane_10k_1500} \\ \hline
+1000 & \includegraphics[width=0.5\textwidth, height=0.35\textheight]{fig/plane_1k_50} & \includegraphics[width=0.5\textwidth, height=0.35\textheight]{fig/plane_1k_150} & \includegraphics[width=0.5\textwidth, height=0.4\textheight]{fig/plane_1k_1500} \\ \hline
+10000& \includegraphics[width=0.5\textwidth, height=0.35\textheight]{fig/plane_10k_50} & \includegraphics[width=0.5\textwidth, height=0.35\textheight]{fig/plane_10k_150} & \includegraphics[width=0.5\textwidth, height=0.35\textheight]{fig/plane_10k_1500} \\ \hline
 \bottomrule
 \end{tabular}
+\caption{The Table shows the results of varying the size of trees and size of input data. The images shows in red result of the forest, blue the labeled data. The used function was a plane: $2*x + 3*y$}
+\label{tab:res_gen_plane}
+\end{table}
 
-%\begin{tabular}{l | c | c}
-%\diaghead{\theadfont Diag ColumnmnHead II}%
-%{Diag\\Column Head I}{Diag Column\\Head II}&
-%datapoints & 50 & 150 & 1500 %& \hline \hline
-%\end{tabular}
+\end{landscape}
 
+\subsubsection*{Camera relocalization} % (fold)
+\label{ssub:relocalization}
+After the general random regression forest, the implementation was extended to perform an camera reallocation task, like shown by Shotton et al. \cite{shotton}. Here the results are presented in table ~\ref{tab:res_reallocation} in order the coordinates in real world coordinates.
 
-% subsubsection camera_relocalization (end)
+\begin{table}[p]
+\begin{tabular}{|c|c|c|c|c|c|c|c|}
+\toprule
+Tree Configuration & \multicolumn{3}{|c|}{hs} & \multicolumn{3}{|c|}{hsPr} & SSE \\ \hline
+\midrule
+150 & -466.7 & 530.4 & 1446.7 & 305.0 & 370.1 & 450.1 & 4.8289e+11  \\ \hline
+150 & -483.8 & 509.9 & 1397.5 & 281.6 & 384.3 & 500.3 & 5.4586e+11  \\ \hline
+150 & -145.3 & 709.7 & 843.3 & 301.8 & 407.6 & 499.6 & 2.6319e+11  \\ \hline
+150 & 429.4 & 472.3 & 49.0 & 297.0 & 394.9 & 498.4 & 5.1679e+10  \\ \hline
+50 & -6.4 & 424.0 & 1401.8 & 242.6 & 371.2 & 517.4 & 5.5096e+11  \\ \hline
+50 & -48.2 & 503.6 & 1241.9 & 362.0 &  220.7 & 501.4 & 4.2114e+11 \\ \hline
+50 & -107.1 & 634.0 & 1054.0 & 308.4 & 408.9 & 503.8 & 3.5035e+11 \\ \hline
+50 & 360.2 & 28.7 & 137.9 &  274.8 & 384.9 & 537.4 & 1.5420e+10 \\ \hline
+\bottomrule
+\end{tabular}
+\caption{The Table shows 5 arbitrary results of two different trees. Here the data size is fixed to the image size 640x480. Here hs represents the labeled coordinates, hsPr the calculated coordinates, and SSE the error between them. Note that the coordinates are given in real world coordinates.}
+\label{tab:res_reallocation}
+\end{table}
 
-% subsection what_method_will_get_implemented_ (end)
+\subsection{Problems}
 
+Because the relocalization forest should dice at each node the parameters new, it was not possible to calculate the input data in advance. Therefore the decision was made to use a matrix of function handles to perform the calculation of the input data in each node. This has to be done at the training and by applying the forest to actual calculate the result. Because of this the implemenation is much slower than the original classification regression forest. To improve performance at the apply state, it might be possible to calculate the input data only for those pixels which are actual used instead of every pixel. Because in a leaf or deeper nodes, 307200 data points or pixels are calculated but maybe only 4 are used!
 
-
-
-% subsection how_can_the_method_be_evaluated_ (end)
+Additionally only one image (color as well as its corresponding depth) is used for training and applying instead of the whole image base. This leads also to the bad performance in terms of a big error. 
 
 
 % ============================================================
