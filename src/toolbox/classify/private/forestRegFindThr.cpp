@@ -25,13 +25,13 @@ typedef unsigned int uint32;
 }*/
 
 // perform actual computation
-void forestFindThr( int N, int F, const double *data,
+void forestFindThr( int N, int F, const float *data,
   const double *ys, const float *ws, const uint32 *order, const int split,
   uint32 &fid, float &thr, double &gain )
 {
 
   //double *Wl, *Wr, *W; 
-  double *data1; 
+  float *data1; 
   uint32 *order1;
   int i, j, j1, j2; 
   double vBst, vInit, v;
@@ -58,7 +58,7 @@ void forestFindThr( int N, int F, const double *data,
     //dice \delta (offest of pixel) Eq. (2), (3)
     //dice thr
   for( i=0; i<F; i++ ) {
-    order1=(uint32*) order+i*N; data1=(double*) data+i*sizeof(double);
+    order1=(uint32*) order+i*N; data1=(float*) data+i*sizeof(float);
     
     
     thr = 0.5*(data1[ order1[k] ] + data1[ order1[k+1] ]);
@@ -213,10 +213,10 @@ void forestFindThr( int N, int F, const double *data,
 // [fid,thr,gain] = mexFunction(data,ys,ws,order,H,split);
 void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
   int  N, F, split; 
-  float *ws, thr;
-  double gain, *data, *ys; 
+  float *data, *ws, thr;
+  double gain,  *ys; 
   uint32 *order, fid;
-  data = (double*) mxGetData(prhs[0]);
+  data = (float*) mxGetData(prhs[0]);
   ys = (double*) mxGetData(prhs[1]);
   ws = (float*) mxGetData(prhs[2]);
   order = (uint32*) mxGetData(prhs[3]);

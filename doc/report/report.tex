@@ -169,21 +169,6 @@
 
 
 
-\begin{abstract}
-
-
-
-%Replace this text with your abstract.
-
-
-
-%----------------------------------------------------------------------
-
-% Do not alter the following two lines
-
-\end{abstract}
-
-
 \section{Project Proposal}
 
 \subsection{Introduction} % (fold)
@@ -192,11 +177,11 @@ First, a regression forest based on the Piotr Dollar toolbox \cite{piotr} will b
 
 Secondly the implementation itself should be evaluated, to make a statement to the general performance of the implementation.
 
-After that the implementation should be used for camera relocalization. Again the dataset should be evaluated. Here not only the evaluation described below is used, but also own dataset. The aim of this work is to show negative examples and find scenarios where the introduced method \cite{shotton} doesn't work as presented.
+After that the implementation should be adapted for camera relocalization as shown by Shotton et al \cite{shotton} . The adapted implementation is further evaluated using the dataset given by Shotton et al.
 
 \subsubsection{Regression Random Forest}
 \label{rrf_intro}
-The weak learner (\ref{eqn:weaklearner}) or split function splits the data into a left and right dataset, by thresholding.
+The weak learner given by equation (\ref{eqn:weaklearner}) also called split function splits the data into a left and right dataset, by thresholding.
 
 \begin{eqnarray}\label{eqn:weaklearner}
   h(\mathbf{p};\mathbf{\theta}_n) = [ f_{\phi_n}(\mathbf{p}) \geq \tau_n ]
@@ -217,7 +202,7 @@ Because several trees are included in a forest the output of all trees have to b
 
 \subsection{Implementation} % (fold)
 \label{sub:implementation}
-To achieve the defined goal, the Piotr Dollar toolbox \cite{piotr} has to be adopted. To be more precise the Objective function as given in equation (\ref{eqn:objectiv_function}) was added. Also variance and mean were added as component of the forest structure, while the mean value can be interpreted as the regression result of each tree.
+To achieve the defined goal, the Piotr Dollar toolbox \cite{piotr} was adopted. To be more precise the Objective function as given in equation (\ref{eqn:objectiv_function}) was added. Also variance and mean were added as component of the forest structure, while the mean value can be interpreted as the regression result of each tree.
 
 \subsubsection*{Regression Forest} % (fold)
 \label{ssub:regression_forest}
@@ -269,13 +254,15 @@ Datapoints & \multicolumn{3}{|c|}{trees} \\ \hline
 
 \subsubsection*{Camera relocalization} % (fold)
 \label{ssub:relocalization}
-After the general random regression forest, the implementation was extended to perform an camera reallocation task, like shown by Shotton et al. \cite{shotton}. Here the results are presented in table ~\ref{tab:res_reallocation} in order the coordinates in real world coordinates.
+After the general random regression forest, the implementation was extended to perform an camera relocalization task, as shown by Shotton et al. \cite{shotton}. Here the results are presented in table ~\ref{tab:res_reallocation} in order the coordinates in real world coordinates.
 
 \begin{table}[p]
 \begin{tabular}{|c|c|c|c|c|c|c|c|}
 \toprule
-Tree Configuration & \multicolumn{3}{|c|}{hs} & \multicolumn{3}{|c|}{hsPr} & SSE \\ \hline
+\hline Tree Configuration & \multicolumn{3}{|c|}{Ground truth} & \multicolumn{3}{|c|}{Prediction} & RSS \\ \hline
+& x & y & z & x & y & z & \\ \hline
 \midrule
+\hline
 150 & -466.7 & 530.4 & 1446.7 & 305.0 & 370.1 & 450.1 & 4.8289e+11  \\ \hline
 150 & -483.8 & 509.9 & 1397.5 & 281.6 & 384.3 & 500.3 & 5.4586e+11  \\ \hline
 150 & -145.3 & 709.7 & 843.3 & 301.8 & 407.6 & 499.6 & 2.6319e+11  \\ \hline
@@ -286,7 +273,7 @@ Tree Configuration & \multicolumn{3}{|c|}{hs} & \multicolumn{3}{|c|}{hsPr} & SSE
 50 & 360.2 & 28.7 & 137.9 &  274.8 & 384.9 & 537.4 & 1.5420e+10 \\ \hline
 \bottomrule
 \end{tabular}
-\caption{The Table shows 5 arbitrary results of two different trees. Here the data size is fixed to the image size 640x480. Here hs represents the labeled coordinates, hsPr the calculated coordinates, and SSE the error between them. Note that the coordinates are given in real world coordinates.}
+\caption{The Table shows 5 randomly chosen results of two different trees. Here the data size is fixed to the image size 640x480. RRS being the residual sum of squares. Note that the coordinates are given in real world coordinates.}
 \label{tab:res_reallocation}
 \end{table}
 

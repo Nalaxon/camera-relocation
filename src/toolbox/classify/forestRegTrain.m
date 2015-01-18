@@ -121,9 +121,11 @@ while( k < K )
   
   fids1=wswor(fWts,F1,4);
   data1 = data{fids1}(delta(1), delta(2), channel(1), channel(2))'; %data1=data(dids1,fids1);
-  data2 = data1(dids1);
+  data2 = single(data1(dids1));
   [~,order1]=sort(data2); order1=uint32(order1-1);
+  %tic;
   [fid,thr,gain]=forestRegFindThr(data2,ys1,dWts(dids1),order1,split); %TODO: find splits, idee: mehrere zuf??llige werte, berechne objective function (entropie) f??r jeden, behalte den besten
+  %toc;
   size(data2);
   fid=fids1(fid); left=data1(dids1)<thr; count0=nnz(left);
   
