@@ -57,7 +57,6 @@ t = 0:1:10000;
 
 subplot(2,2,3); plotDistribution(t, pd0);
 
-figure(2);
   figure(1); clf; hold on; plot(xs0,hs0,'.b'); plot(xs0,hsPr0,'.r');
 
 %subplot(3,2,6); plotDistribution(t, pd1, H);
